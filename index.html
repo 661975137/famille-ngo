@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Famille N’GÔ KOFFI N’GORANKRO</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --primary: #0c2310;       /* Vert forêt */
+            --accent: #c0583e;        /* Terre cuite */
+            --gold: #e5a93c;          /* Or */
+            --bg-light: #faf8f2;      /* Ivoire */
+            --text-dark: #1f2421;
+            --white: #ffffff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-dark); display: flex; flex-direction: column; min-height: 100vh; }
+        header { background-color: var(--primary); color: var(--white); padding: 15px; text-align: center; border-bottom: 4px solid var(--gold); }
+        header h1 { font-size: 1.4rem; color: var(--gold); text-transform: uppercase; }
+        header p { font-size: 0.85rem; opacity: 0.9; }
+
+        .stats-bar { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 10px 15px; background: var(--white); border-bottom: 1px solid #e0e0e0; }
+        .stat-card { background: var(--bg-light); border-left: 4px solid var(--accent); padding: 8px; border-radius: 4px; text-align: center; }
+        .stat-card h3 { font-size: 0.75rem; color: #666; text-transform: uppercase;}
+        .stat-card p { font-size: 1.1rem; font-weight: bold; color: var(--primary); }
+
+        .tree-container { flex: 1; padding: 15px; display: flex; flex-direction: column; align-items: center; background: radial-gradient(circle, #ffffff 0%, #f4f0e6 100%); overflow-y: auto; }
+        .node-group { display: flex; flex-direction: column; align-items: center; width: 100%; gap: 15px; }
+        .row { display: flex; justify-content: center; gap: 12px; width: 100%; flex-wrap: wrap; }
+
+        .member-card { background: var(--white); border: 2px solid #ddd; border-radius: 8px; padding: 8px; width: 130px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; position: relative; }
+        .member-card.active { border-color: var(--gold); background-color: var(--primary); color: var(--white); }
+        .member-card img { width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--gold); margin-bottom: 4px; object-fit: cover; }
+        .member-name { font-size: 0.8rem; font-weight: bold; }
+        .member-meta { font-size: 0.65rem; opacity: 0.8; }
+        .role-badge { position: absolute; top: -5px; right: -5px; font-size: 0.6rem; background: var(--accent); color: var(--white); padding: 2px 5px; border-radius: 10px; }
+        .label-relation { font-size: 0.7rem; color: #777; font-weight: bold; text-transform: uppercase; margin-bottom: -10px;}
+
+        .detail-panel { background: var(--white); border: 2px solid var(--gold); border-radius: 12px; padding: 15px; margin-top: 15px; width: 100%; max-width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; gap: 15px; align-items: center; }
+        .panel-avatar { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--accent); object-fit: cover; }
+        .panel-info { flex: 1; }
+        .detail-panel h3 { color: var(--primary); font-size: 1.1rem; margin-bottom: 3px; }
+        .detail-panel p { font-size: 0.8rem; margin-bottom: 6px; color: #555; }
+        
+        .action-button-group { display: flex; gap: 8px; margin-top: 5px; }
+        .btn-action { flex: 1; padding: 6px; border-radius: 6px; font-size: 0.7rem; font-weight: bold; cursor: pointer; border: none; text-align: center; }
+        .btn-edit { background: var(--gold); color: var(--primary); }
+        .btn-child { background: var(--primary); color: white; }
+
+        .bottom-nav { background: var(--white); border-top: 2px solid var(--gold); display: flex; padding: 10px 0; position: sticky; bottom: 0; width: 100%; z-index: 100; }
+        .nav-item { background: none; border: none; color: #666; font-size: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 4px; width: 33%; }
+        .nav-item.active { color: var(--primary); font-weight: bold; }
+        .nav-item-icon { font-size: 1.2rem; }
+
+        .app-section { display: none; padding: 15px; flex: 1; overflow-y: auto; }
+        .app-section.active { display: block; }
+
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: bold; margin-bottom: 4px; color: var(--primary); }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.9rem; background: var(--white); }
+        
+        .photo-uploader { display: flex; align-items: center; gap: 15px; background: #f0ece1; padding: 10px; border-radius: 8px; border: 2px dashed var(--accent); }
+        .photo-preview { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--white); background: #ccc; }
+        .btn-submit { background: var(--accent); color: var(--white); border: none; width: 100%; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Famille N’GÔ</h1>
+        <p>Serveur Nuage Connecté (Cloud Active)</p>
+    </header>
+
+    <main id="section-tree" class="app-section active">
+        <div class="stats-bar">
+            <div class="stat-card"><h3>Membres Recensés</h3><p id="stat-total">-</p></div>
+            <div class="stat-card"><h3>Sauvegarde Cloud</h3><p style="color: green;">En Ligne 🌐</p></div>
+        </div>
+
+        <div class="tree-container">
+            <div class="node-group">
+                <div class="label-relation" id="title-upper">Frères & Sœurs Co-Fondateurs</div>
+                <div class="row" id="row-parents"></div>
+                <div class="label-relation">Membre Actuel</div>
+                <div class="row" id="row-current"></div>
+                <div class="label-relation" id="title-lower">Descendants directs (Enfants)</div>
+                <div class="row" id="row-children"></div>
+            </div>
+
+            <div class="detail-panel" id="detail-panel">
+                <img src="" id="panel-avatar" class="panel-avatar" alt="Profil">
+                <div class="panel-info">
+                    <h3 id="panel-name">Sélectionnez un membre</h3>
+                    <p id="panel-meta">Cliquez sur un membre pour charger sa lignée depuis le serveur.</p>
+                    <div id="panel-actions" class="action-button-group" style="display: none;">
+                        <button class="btn-action btn-edit" onclick="openEditMode()">✏️ Modifier</button>
+                        <button class="btn-action btn-child" onclick="openAddChildMode()">👶 + Enfant</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section id="section-search" class="app-section">
+        <input type="text" id="search-input" class="form-control" placeholder="Rechercher dans toute la base cloud..." oninput="filterMembers()">
+        <div id="search-results" style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;"></div>
+    </section>
+
+    <section id="section-add" class="app-section">
+        <h2 id="form-title" style="font-size: 1.1rem; color: var(--primary); margin-bottom: 15px; border-bottom: 2px solid var(--gold); padding-bottom: 5px;">Enregistrer un Nouveau Membre</h2>
+        <form id="member-form" onsubmit="saveMemberForm(event)">
+            <input type="hidden" id="form-id">
+            <input type="hidden" id="form-father-id">
+            <input type="hidden" id="form-mother-id">
+            <input type="hidden" id="form-photo-base64">
+
+            <div class="form-group">
+                <label>Photo de profil</label>
+                <div class="photo-uploader">
+                    <img src="" id="upload-preview" class="photo-preview" alt="Aperçu">
+                    <div>
+                        <input type="file" id="form-photo-file" accept="image/*" onchange="processPhoto(this)">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Nom de famille *</label>
+                <input type="text" id="form-lastname" class="form-control" required value="N'GÔ">
+            </div>
+            <div class="form-group">
+                <label>Prénom *</label>
+                <input type="text" id="form-firstname" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Surnom</label>
+                <input type="text" id="form-nickname" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Sexe *</label>
+                <select id="form-gender" class="form-control" required>
+                    <option value="M">Homme</option>
+                    <option value="F">Femme</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Branche Familiale *</label>
+                <select id="form-branch" class="form-control" required>
+                    <option value="" disabled selected>-- Choisissez une lignée --</option>
+                    <option value="Lignée Kouamé">Lignée de l'Aîné Kouamé</option>
+                    <option value="Lignée Amoin">Lignée d'Amoin</option>
+                    <option value="Lignée Kouassi">Lignée de Kouassi</option>
+                    <option value="Lignée Boni">Lignée de Boni</option>
+                    <option value="Lignée Pokou">Lignée de Pokou</option>
+                </select>
+            </div>
+            <div class="form-group" id="parent-helper-text" style="display:none; background:#eef7f0; padding:8px; border-radius:5px; font-size:0.8rem; color: var(--primary);"></div>
+            <div class="form-group">
+                <label>Lieu de Résidence</label>
+                <input type="text" id="form-residence" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Téléphone</label>
+                <input type="tel" id="form-phone" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Profession</label>
+                <input type="text" id="form-job" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Notes & Histoire Familiale</label>
+                <textarea id="form-notes" class="form-control" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn-submit" id="form-submit-btn">Envoyer et Sauvegarder sur le Cloud</button>
+        </form>
+    </section>
+
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('tree', this)"><span class="nav-item-icon">🌳</span><span>L'Arbre</span></button>
+        <button class="nav-item" onclick="switchTab('search', this)"><span class="nav-item-icon">🔍</span><span>Recherche</span></button>
+        <button class="nav-item" onclick="resetFormForNew(); switchTab('add', this)"><span class="nav-item-icon">➕</span><span>Ajouter</span></button>
+    </nav>
+
+    <script>
+        // ==========================================
+        // CONFIGURATION DU SERVEUR CLOUD SUPABASE
+        // REMPLACEZ LES VALEURS CI-DESSOUS APRÈS LA CRÉATION DE VOTRE COMPTE
+        // ==========================================
+        const SUPABASE_URL = "VOTRE_URL_SUPABASE_ICI"; 
+        const SUPABASE_ANON_KEY = "VOTRE_CLE_ANON_ICI";
+        
+        const supabase = (SUPABASE_URL !== "VOTRE_URL_SUPABASE_ICI") ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+        const defaultAvatar = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23888'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z'/></svg>";
+
+        // Données locales de secours au cas où le cloud n'est pas encore configuré
+        let dataset = [
+            { id: "f1", lastname: "N'GÔ", firstname: "Kouamé", nickname: "L'Aîné Fondateur", gender: "M", branch: "Lignée Kouamé", residence: "KOFFI N’GORANKRO", phone: "-", job: "Ancien", notes: "Premier des 5 piliers fondateurs.", fatherId: null, motherId: null, isFounder: true, photo: defaultAvatar },
+            { id: "f2", lastname: "N'GÔ", firstname: "Amoin", nickname: "La Gardienne", gender: "F", branch: "Lignée Amoin", residence: "KOFFI N’GORANKRO", phone: "-", job: "-", notes: "Deuxième pilier de la fratrie originelle.", fatherId: null, motherId: null, isFounder: true, photo: defaultAvatar },
+            { id: "f3", lastname: "N'GÔ", firstname: "Kouassi", nickname: "Le Chasseur", gender: "M", branch: "Lignée Kouassi", residence: "KOFFI N’GORANKRO", phone: "-", job: "-", notes: "Troisième pilier de la fratrie originelle.", fatherId: null, motherId: null, isFounder: true, photo: defaultAvatar },
+            { id: "f4", lastname: "N'GÔ", firstname: "Boni", nickname: "Le Bâtisseur", gender: "M", branch: "Lignée Boni", residence: "KOFFI N’GORANKRO", phone: "-", job: "-", notes: "Quatrième pilier de la fratrie originelle.", fatherId: null, motherId: null, isFounder: true, photo: defaultAvatar },
+            { id: "f5", lastname: "N'GÔ", firstname: "Pokou", nickname: "La Conciliatrice", gender: "F", branch: "Lignée Pokou", residence: "KOFFI N’GORANKRO", phone: "-", job: "-", notes: "Cinquième pilier de la fratrie originelle.", fatherId: null, motherId: null, isFounder: true, photo: defaultAvatar }
+        ];
+
+        let currentFocusId = "f1";
+
+        async function loadDataFromCloud() {
+            if (!supabase) return; // Si pas de cloud, on reste en mode démo
+            const { data, error } = await supabase.from('family_members').select('*');
+            if (!error && data && data.length > 0) {
+                dataset = data;
+                renderTree();
+            }
+        }
+
+        function switchTab(tabName, button) {
+            document.querySelectorAll('.app-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`section-${tabName}`).classList.add('active');
+            if(button) button.classList.add('active');
+            if(tabName === 'tree') renderTree();
+        }
+
+        function processPhoto(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('form-photo-base64').value = e.target.result;
+                    document.getElementById('upload-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function renderTree() {
+            const currentMember = dataset.find(m => m.id === currentFocusId);
+            if (!currentMember) return;
+
+            document.getElementById('stat-total').innerText = dataset.length;
+            document.getElementById('panel-avatar').src = currentMember.photo || defaultAvatar;
+            document.getElementById('panel-name').innerText = `${currentMember.firstname} ${currentMember.lastname}`;
+            document.getElementById('panel-meta').innerText = `Surnom: ${currentMember.nickname || 'Aucun'} | ${currentMember.branch}`;
+            document.getElementById('panel-actions').style.display = 'flex';
+            document.getElementById('row-current').innerHTML = createCardHtml(currentMember, true);
+
+            if (currentMember.isFounder) {
+                document.getElementById('title-upper').innerText = "Ses Frères & Sœurs Co-Fondateurs";
+                const siblings = dataset.filter(m => m.isFounder && m.id !== currentFocusId);
+                let siblingsHtml = "";
+                siblings.forEach(s => { siblingsHtml += createCardHtml(s, false); });
+                document.getElementById('row-parents').innerHTML = siblingsHtml;
+            } else {
+                document.getElementById('title-upper').innerText = "Ses Parents Directs";
+                let parentsHtml = "";
+                if (currentMember.fatherId) { const f = dataset.find(m => m.id === currentMember.fatherId); if(f) parentsHtml += createCardHtml(f, false); }
+                if (currentMember.motherId) { const m = dataset.find(m => m.id === currentMember.motherId); if(m) parentsHtml += createCardHtml(m, false); }
+                document.getElementById('row-parents').innerHTML = parentsHtml || "<p style='color:#999; font-size:0.75rem;'>Génération précédente</p>";
+            }
+
+            let childrenHtml = "";
+            const children = dataset.filter(m => m.fatherId === currentFocusId || m.motherId === currentFocusId);
+            children.forEach(c => { childrenHtml += createCardHtml(c, false); });
+            document.getElementById('row-children').innerHTML = childrenHtml || "<p style='color:#999; font-size:0.75rem;'>Aucun enfant.</p>";
+        }
+
+        function createCardHtml(member, isCenter) {
+            return `
+                <div class="member-card ${isCenter ? 'active' : ''}" onclick="changeFocus('${member.id}')">
+                    <div class="role-badge" style="background:${member.isFounder ? 'var(--gold)' : 'var(--accent)'};">
+                        ${member.isFounder ? '⭐' : (member.gender === 'M' ? '♂' : '♀')}
+                    </div>
+                    <img src="${member.photo || defaultAvatar}">
+                    <div class="member-name">${member.firstname}</div>
+                    <div class="member-meta" style="font-size:0.6rem;">${member.nickname || member.branch}</div>
+                </div>
+            `;
+        }
+
+        function changeFocus(id) { currentFocusId = id; renderTree(); }
+
+        function openEditMode() {
+            const member = dataset.find(m => m.id === currentFocusId);
+            if (!member) return;
+            document.getElementById('form-title').innerText = `Modifier ${member.firstname}`;
+            document.getElementById('form-id').value = member.id;
+            document.getElementById('form-father-id').value = member.fatherId || "";
+            document.getElementById('form-mother-id').value = member.motherId || "";
+            document.getElementById('form-lastname').value = member.lastname;
+            document.getElementById('form-firstname').value = member.firstname;
+            document.getElementById('form-nickname').value = member.nickname;
+            document.getElementById('form-gender').value = member.gender;
+            document.getElementById('form-branch').value = member.branch;
+            document.getElementById('form-residence').value = member.residence;
+            document.getElementById('form-phone').value = member.phone;
+            document.getElementById('form-job').value = member.job;
+            document.getElementById('form-notes').value = member.notes;
+            document.getElementById('form-photo-base64').value = member.photo || defaultAvatar;
+            document.getElementById('upload-preview').src = member.photo || defaultAvatar;
+            document.getElementById('parent-helper-text').style.display = 'none';
+            switchTab('add', null);
+        }
+
+        function openAddChildMode() {
+            const parent = dataset.find(m => m.id === currentFocusId);
+            resetFormForNew();
+            document.getElementById('form-title').innerText = `Ajouter un enfant à ${parent.firstname}`;
+            if (parent.gender === 'M') document.getElementById('form-father-id').value = parent.id;
+            else document.getElementById('form-mother-id').value = parent.id;
+            document.getElementById('form-branch').value = parent.branch;
+            switchTab('add', null);
+        }
+
+        function resetFormForNew() {
+            document.getElementById('member-form').reset();
+            document.getElementById('form-id').value = "";
+            document.getElementById('form-father-id').value = "";
+            document.getElementById('form-mother-id').value = "";
+            document.getElementById('upload-preview').src = defaultAvatar;
+        }
+
+        async function saveMemberForm(event) {
+            event.preventDefault();
+            const id = document.getElementById('form-id').value;
+            
+            const memberData = {
+                lastname: document.getElementById('form-lastname').value,
+                firstname: document.getElementById('form-firstname').value,
+                nickname: document.getElementById('form-nickname').value,
+                gender: document.getElementById('form-gender').value,
+                branch: document.getElementById('form-branch').value,
+                residence: document.getElementById('form-residence').value,
+                phone: document.getElementById('form-phone').value,
+                job: document.getElementById('form-job').value,
+                notes: document.getElementById('form-notes').value,
+                fatherId: document.getElementById('form-father-id').value || null,
+                motherId: document.getElementById('form-mother-id').value || null,
+                photo: document.getElementById('form-photo-base64').value || defaultAvatar,
+                isFounder: id ? dataset.find(m => m.id === id).isFounder : false
+            };
+
+            if (supabase) {
+                // Envoi réel vers la base cloud sécurisée
+                if (id) {
+                    await supabase.from('family_members').update(memberData).eq('id', id);
+                } else {
+                    await supabase.from('family_members').insert([memberData]);
+                }
+                alert("Données synchronisées sur le serveur cloud familial !");
+                await loadDataFromCloud();
+            } else {
+                // Mode de secours local si pas de clés fournies
+                if (id) {
+                    const idx = dataset.findIndex(m => m.id === id);
+                    dataset[idx] = { ...dataset[idx], ...memberData };
+                } else {
+                    const newId = "m_" + (dataset.length + 1);
+                    dataset.push({ id: newId, ...memberData });
+                    currentFocusId = newId;
+                }
+                alert("Sauvegarde locale (Mode démo sans cloud).");
+                renderTree();
+            }
+            resetFormForNew();
+            switchTab('tree', document.querySelectorAll('.nav-item')[0]);
+        }
+
+        window.onload = function() {
+            loadDataFromCloud();
+            renderTree();
+        };
+    </script>
+</body>
+</html>
+
