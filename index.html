@@ -35,7 +35,8 @@
         
         .tree-placeholder { background: white; padding: 30px; border-radius: 12px; border: 2px solid var(--gold); text-align: center; margin-top: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: relative; }
         .founder-crown { display: none; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 2rem; }
-        .profile-circle { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--accent); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; background: #eee; font-weight: bold; color: #555; overflow: hidden; }
+        .profile-circle { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--accent); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; background: #eee; font-weight: bold; color: #555; overflow: hidden; }
+        .profile-circle img { width: 100%; height: 100%; object-fit: cover; }
         
         .badge-founder-card { background: var(--gold); color: var(--primary); font-size: 0.7rem; font-weight: bold; padding: 2px 6px; border-radius: 4px; margin-left: 5px; display: inline-block; vertical-align: middle; }
 
@@ -53,20 +54,23 @@
         .member-info h4 { color: var(--primary); font-size: 1rem; display: flex; align-items: center; }
         .member-info p { font-size: 0.8rem; color: #666; }
         
+        .mini-avatar { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1px solid var(--gold); margin-right: 10px; }
+        .flex-left { display: flex; align-items: center; }
+
         nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--primary); border-top: 2px solid var(--gold); display: flex; height: 60px; z-index: 1000; }
         nav button { flex: 1; background: none; border: none; color: #aaa; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; gap: 4px; cursor: pointer; }
         nav button.active { color: var(--white); font-weight: bold; }
-        nav button#nav-add { display: none; } /* Caché par défaut pour les utilisateurs basiques */
+        nav button#nav-add { display: none; }
         nav button span.icon { font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
     <header>
-        <div id="admin-indicator" class="admin-badge">ADMIN</div>
+        <div id="admin-indicator" class="admin-badge">Enregistreur : <span id="admin-name"></span></div>
         <h1>Famille N’GÔ</h1>
         <p>Serveur Nuage Connecté (Cloud Active)</p>
-        <button id="admin-btn" class="btn-admin-login" onclick="handleAdminAuth()">Connexion Admin</button>
+        <button id="admin-btn" class="btn-admin-login" onclick="handleAdminAuth()">Accès Enregistrement</button>
     </header>
 
     <div class="dashboard">
@@ -101,15 +105,19 @@
             <div id="search-results"></div>
         </div>
 
-        <!-- SECTION 3 : AJOUTER (UNIQUEMENT POUR L'ADMIN) -->
+        <!-- SECTION 3 : AJOUTER -->
         <div id="section-add" class="section">
-            <h2 style="margin-bottom: 15px; font-size: 1.2rem; color: var(--primary);">Espace Administrateur : Nouveau Membre</h2>
+            <h2 style="margin-bottom: 15px; font-size: 1.2rem; color: var(--primary);">Nouveau Recensement</h2>
             <form id="add-form">
                 <button type="submit" class="btn btn-primary" id="submit-btn">💾 ENREGISTRER SUR LE CLOUD</button>
                 
                 <div class="form-group checkbox">
                     <input type="checkbox" id="form-isfounder">
                     <label for="form-isfounder" style="color: #d4af37; font-weight: bold;">⭐ Fait partie des 5 frères fondateurs</label>
+                </div>
+                <div class="form-group">
+                    <label>Photo de profil</label>
+                    <input type="file" id="form-photo-file" accept="image/*">
                 </div>
                 <div class="form-group">
                     <label>Nom de famille *</label>
@@ -176,27 +184,39 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         let allMembers = [];
-        let isAdmin = false;
-        const ADMIN_CODE = "1234"; // << CODE SECRET ADMINISTRATEUR (Modifiable ici)
+        let currentConnectedAdmin = null;
+
+        // 👥 LISTE DES PERSONNES AUTORISÉES (Vous pouvez modifier les noms et codes ici)
+        const AUTORIZED_USERS = [
+            { name: "Narcisse", code: "2026" },
+            { name: "Aubin", code: "7777" },
+            { name: "Koffi", code: "9999" }
+        ];
 
         function handleAdminAuth() {
-            if (isAdmin) {
-                isAdmin = false;
-                alert("Déconnexion de l'espace Administrateur.");
+            if (currentConnectedAdmin) {
+                currentConnectedAdmin = null;
+                alert("Déconnexion réussie.");
                 document.getElementById('admin-indicator').style.display = 'none';
                 document.getElementById('nav-add').style.display = 'none';
-                document.getElementById('admin-btn').innerText = "Connexion Admin";
+                document.getElementById('admin-btn').innerText = "Accès Enregistrement";
                 switchTab('tree');
             } else {
-                let code = prompt("Veuillez saisir le code secret Administrateur :");
-                if (code === ADMIN_CODE) {
-                    isAdmin = true;
-                    alert("Accès accordé ! L'onglet 'Ajouter' est maintenant disponible.");
+                let codeSaisi = prompt("Entrez votre code d'accès personnel pour enregistrer :");
+                if (!codeSaisi) return;
+
+                // Vérification si le code appartient à un utilisateur de la liste
+                const userFound = AUTORIZED_USERS.find(u => u.code === codeSaisi);
+
+                if (userFound) {
+                    currentConnectedAdmin = userFound.name;
+                    alert(`Bienvenue ${userFound.name} ! Vous pouvez maintenant ajouter des membres.`);
+                    document.getElementById('admin-name').innerText = userFound.name;
                     document.getElementById('admin-indicator').style.display = 'block';
                     document.getElementById('nav-add').style.display = 'flex';
                     document.getElementById('admin-btn').innerText = "Déconnexion";
-                } else if (code !== null) {
-                    alert("Code secret incorrect ! Accès refusé.");
+                } else {
+                    alert("Code d'accès inconnu ou incorrect !");
                 }
             }
         }
@@ -227,18 +247,27 @@
                 container.innerHTML = `<p style="text-align:center; color:#888; margin-top:20px;">Aucun membre enregistré.</p>`;
                 return;
             }
-            container.innerHTML = list.map(m => `
-                <div class="member-card ${m.isFounder ? 'is-founder' : ''}" onclick="selectMember(${m.id})">
-                    <div class="member-info">
-                        <h4>
-                            ${m.firstname} ${m.lastname}
-                            ${m.isFounder ? '<span class="badge-founder-card">👑 FONDATEUR</span>' : ''}
-                        </h4>
-                        <p>${m.branch || 'Branche'} • ${m.residence || 'Lieu'}</p>
+            container.innerHTML = list.map(m => {
+                let avatarHtml = `<span style="font-size: 1.2rem; margin-right: 10px;">${m.gender === 'M' ? '👨' : '👩'}</span>`;
+                if (m.photo) {
+                    avatarHtml = `<img src="${m.photo}" class="mini-avatar" alt="">`;
+                }
+                return `
+                    <div class="member-card ${m.isFounder ? 'is-founder' : ''}" onclick="selectMember(${m.id})">
+                        <div class="flex-left">
+                            ${avatarHtml}
+                            <div class="member-info">
+                                <h4>
+                                    ${m.firstname} ${m.lastname}
+                                    ${m.isFounder ? '<span class="badge-founder-card">👑 FONDATEUR</span>' : ''}
+                                </h4>
+                                <p>${m.branch || 'Branche'} • ${m.residence || 'Lieu'}</p>
+                            </div>
+                        </div>
+                        <span>➔</span>
                     </div>
-                    <span>${m.gender === 'M' ? '👨' : '👩'}</span>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         window.selectMember = function(id) {
@@ -247,6 +276,7 @@
             
             const treeBox = document.getElementById('tree-box');
             const crownIcon = document.getElementById('crown-icon');
+            const photoPlaceholder = document.getElementById('tree-photo-placeholder');
             
             if (member.isFounder) {
                 treeBox.style.borderColor = "var(--gold)";
@@ -258,7 +288,12 @@
                 crownIcon.style.display = "none";
             }
 
-            document.getElementById('tree-photo-placeholder').innerHTML = member.gender === 'M' ? '👨' : '👩';
+            if (member.photo) {
+                photoPlaceholder.innerHTML = `<img src="${member.photo}" alt="Photo de profil">`;
+            } else {
+                photoPlaceholder.innerHTML = member.gender === 'M' ? '👨' : '👩';
+            }
+
             document.getElementById('tree-title').innerText = `${member.firstname} ${member.lastname}`;
             
             let dateAffichage = member.notes && member.notes.includes("Né(e) le :") ? "" : (member.notes || "");
@@ -277,11 +312,36 @@
 
         document.getElementById('add-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!isAdmin) { alert("Action non autorisée. Vous devez être Admin."); return; }
+            if (!currentConnectedAdmin) { alert("Action refusée. Reconnectez-vous."); return; }
             
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = true;
-            submitBtn.innerText = "Sauvegarde...";
+            submitBtn.innerText = "Sauvegarde en cours...";
+            
+            let photoUrl = "";
+            const photoFile = document.getElementById('form-photo-file').files[0];
+
+            // 📸 Gestion du téléversement de la photo vers le bucket Supabase
+            if (photoFile) {
+                const fileExt = photoFile.name.split('.').pop();
+                const fileName = `${Date.now()}.${fileExt}`;
+                const filePath = `${fileName}`;
+
+                const { data: uploadData, error: uploadError } = await _supabase
+                    .storage
+                    .from('avatars')
+                    .upload(filePath, photoFile);
+
+                if (uploadError) {
+                    alert("Erreur lors de l'envoi de la photo, mais l'enregistrement continue.");
+                } else {
+                    const { data: publicUrlData } = _supabase
+                        .storage
+                        .from('avatars')
+                        .getPublicUrl(filePath);
+                    photoUrl = publicUrlData.publicUrl;
+                }
+            }
             
             const birthdate = document.getElementById('form-birthdate').value;
             let finalNotes = document.getElementById('form-notes').value;
@@ -297,13 +357,14 @@
                 phone: document.getElementById('form-phone').value,
                 job: document.getElementById('form-job').value,
                 isFounder: document.getElementById('form-isfounder').checked,
+                photo: photoUrl,
                 notes: finalNotes
             };
 
             try {
                 const { error } = await _supabase.from('family_members').insert([newMember]);
                 if (error) throw error;
-                alert(`Succès ! ${newMember.firstname} a été ajouté au Cloud.`);
+                alert(`Succès ! ${newMember.firstname} a été ajouté avec sa photo.`);
                 document.getElementById('add-form').reset();
                 document.getElementById('form-lastname').value = "N'GÔ";
                 await fetchMembers();
