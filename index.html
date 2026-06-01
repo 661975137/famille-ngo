@@ -14,40 +14,31 @@
             --text-dark: #1f2421;
             --white: #ffffff;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { background-color: var(--bg-light); color: var(--text-dark); display: flex; flex-direction: column; min-height: 100vh; }
         header { background-color: var(--primary); color: var(--white); padding: 15px; text-align: center; border-bottom: 3px solid var(--gold); }
         header h1 { font-size: 1.4rem; color: var(--gold); text-transform: uppercase; }
         header p { font-size: 0.85rem; opacity: 0.9; margin-top: 5px; }
-
         .dashboard { display: flex; gap: 10px; padding: 15px; background: white; border-bottom: 1px solid #ddd; }
         .stat-card { flex: 1; border-left: 4px solid var(--accent); padding: 10px; background: #fdfdfd; border-radius: 4px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .stat-card h3 { font-size: 0.75rem; text-transform: uppercase; color: #666; margin-bottom: 5px; }
         .stat-card p { font-size: 1.2rem; font-weight: bold; color: var(--primary); }
         .stat-card p.online { color: #27ae60; display: flex; align-items: center; justify-content: center; gap: 5px; }
-
         .container { flex: 1; padding: 15px; padding-bottom: 140px; width: 100%; max-width: 600px; margin: 0 auto; }
         .section { display: none; }
         .section.active { display: block; }
-
         .tree-placeholder { background: white; padding: 30px; border-radius: 12px; border: 2px solid var(--gold); text-align: center; margin-top: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .profile-circle { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--accent); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; background: #eee; font-weight: bold; color: #555; overflow: hidden; }
-        .profile-circle img { width: 100%; height: 100%; object-fit: cover; }
-
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; background: white; }
         .form-group textarea { height: 80px; resize: none; }
-        
-        .btn { width: 100%; padding: 16px; border: none; border-radius: 6px; font-weight: bold; font-size: 1.1rem; cursor: pointer; text-transform: uppercase; transition: background 0.2s; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 6px; font-weight: bold; font-size: 1.1rem; cursor: pointer; text-transform: uppercase; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .btn-primary { background-color: #27ae60; color: white; }
         .btn-primary:disabled { background-color: #ccc; cursor: not-allowed; }
-
         .member-card { background: white; padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--primary); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .member-info h4 { color: var(--primary); font-size: 1rem; }
         .member-info p { font-size: 0.8rem; color: #666; }
-
         nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--primary); border-top: 2px solid var(--gold); display: flex; height: 60px; z-index: 1000; }
         nav button { flex: 1; background: none; border: none; color: #aaa; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; gap: 4px; cursor: pointer; }
         nav button.active { color: var(--white); font-weight: bold; }
@@ -55,12 +46,10 @@
     </style>
 </head>
 <body>
-
     <header>
         <h1>Famille N’GÔ</h1>
         <p>Serveur Nuage Connecté (Cloud Active)</p>
     </header>
-
     <div class="dashboard">
         <div class="stat-card">
             <h3>Membres Recensés</h3>
@@ -71,7 +60,6 @@
             <p class="online">En Ligne 🌐</p>
         </div>
     </div>
-
     <div class="container">
         <div id="section-tree" class="section active">
             <div class="tree-placeholder">
@@ -91,10 +79,8 @@
 
         <div id="section-add" class="section">
             <h2 style="margin-bottom: 15px; font-size: 1.2rem; color: var(--primary);">Enregistrer un Nouveau Membre</h2>
-            
             <form id="add-form">
                 <button type="submit" class="btn btn-primary" id="submit-btn">💾 ENREGISTRER SUR LE CLOUD</button>
-
                 <div class="form-group">
                     <label>Nom de famille *</label>
                     <input type="text" id="form-lastname" value="N'GÔ" required>
@@ -104,8 +90,12 @@
                     <input type="text" id="form-firstname" required placeholder="Ex: Kouamé">
                 </div>
                 <div class="form-group">
-                    <label>Surnom</label>
+                    <label>Surnom / Connu sous le nom de</label>
                     <input type="text" id="form-nickname" placeholder="Ex: Kna">
+                </div>
+                <div class="form-group">
+                    <label>Date de Naissance</label>
+                    <input type="date" id="form-birthdate">
                 </div>
                 <div class="form-group">
                     <label>Sexe *</label>
@@ -116,7 +106,13 @@
                 </div>
                 <div class="form-group">
                     <label>Branche familiale / Lignée *</label>
-                    <input type="text" id="form-branch" required placeholder="Ex: Lignée de l'Aîné Kouamé">
+                    <select id="form-branch" required>
+                        <option value="" disabled selected>-- Choisissez la lignée --</option>
+                        <option value="Lignée de l'Aîné Kouamé">Lignée de l'Aîné Kouamé</option>
+                        <option value="Lignée des Cadets">Lignée des Cadets</option>
+                        <option value="Branche Paternelle">Branche Paternelle</option>
+                        <option value="Branche Maternelle">Branche Maternelle</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>Lieu de résidence actuel</label>
@@ -137,125 +133,77 @@
             </form>
         </div>
     </div>
-
     <nav>
-        <button id="nav-tree" class="active" onclick="switchTab('tree')">
-            <span class="icon">🌳</span>
-            <span>L'Arbre</span>
-        </button>
-        <button id="nav-search" onclick="switchTab('search')">
-            <span class="icon">🔍</span>
-            <span>Recherche</span>
-        </button>
-        <button id="nav-add" onclick="switchTab('add')">
-            <span class="icon">➕</span>
-            <span>Ajouter</span>
-        </button>
+        <button id="nav-tree" class="active" onclick="switchTab('tree')"><span class="icon">🌳</span><span>L'Arbre</span></button>
+        <button id="nav-search" onclick="switchTab('search')"><span class="icon">🔍</span><span>Recherche</span></button>
+        <button id="nav-add" onclick="switchTab('add')"><span class="icon">➕</span><span>Ajouter</span></button>
     </nav>
-
     <script>
         const SUPABASE_URL = "https://chaqgzksbcmchnwlsihq.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_00Hzy0uHaPXEZ778E6fp7g_APrYyGcS";
-
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let allMembers = [];
-
         function switchTab(tabName) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-            
             document.getElementById(`section-${tabName}`).classList.add('active');
             document.getElementById(`nav-${tabName}`).classList.add('active');
             window.scrollTo(0, 0);
         }
-
         async function fetchMembers() {
             try {
-                const { data, error } = await _supabase
-                    .from('family_members')
-                    .select('*')
-                    .order('firstname', { ascending: true });
-
+                const { data, error } = await _supabase.from('family_members').select('*').order('firstname', { ascending: true });
                 if (error) throw error;
                 allMembers = data || [];
-                
                 document.getElementById('count-label').innerText = allMembers.length;
                 renderTreeList(allMembers);
-                renderSearchResults(allMembers);
             } catch (err) {
-                console.error("Erreur Cloud:", err.message);
                 document.getElementById('count-label').innerText = "Erreur";
             }
         }
-
         function renderTreeList(list) {
             const container = document.getElementById('members-tree-list');
             if (list.length === 0) {
-                container.innerHTML = `<p style="text-align:center; color:#888; margin-top:20px;">Aucun membre enregistré pour l'instant. Utilisez le bouton <strong>➕ Ajouter</strong> en bas !</p>`;
+                container.innerHTML = `<p style="text-align:center; color:#888; margin-top:20px;">Aucun membre enregistré. Utilisez le bouton <strong>➕ Ajouter</strong> en bas !</p>`;
                 return;
             }
-
             container.innerHTML = list.map(m => `
                 <div class="member-card" onclick="selectMember(${m.id})">
-                    <div class="member-info">
-                        <h4>${m.firstname} ${m.lastname}</h4>
-                        <p>${m.branch || 'Branche non spécifiée'} • ${m.residence || 'Lieu inconnu'}</p>
-                    </div>
-                    <span style="font-size: 1.2rem;">${m.gender === 'M' ? '👨' : '👩'}</span>
+                    <div class="member-info"><h4>${m.firstname} ${m.lastname}</h4><p>${m.branch || 'Branche'} • ${m.residence || 'Lieu'}</p></div>
+                    <span>${m.gender === 'M' ? '👨' : '👩'}</span>
                 </div>
             `).join('');
         }
-
         window.selectMember = function(id) {
             const member = allMembers.find(m => m.id === id);
             if (!member) return;
-
-            const photoPlaceholder = document.getElementById('tree-photo-placeholder');
-            photoPlaceholder.innerHTML = member.gender === 'M' ? '👨' : '👩';
-
+            document.getElementById('tree-photo-placeholder').innerHTML = member.gender === 'M' ? '👨' : '👩';
             document.getElementById('tree-title').innerText = `${member.firstname} ${member.lastname}`;
+            
+            // Formatage de la date pour l'affichage du profil
+            let dateAffichage = member.notes && member.notes.includes("Né(e) le :") ? "" : (member.notes || "");
+            if(member.notes && member.notes.startsWith("Né(e) le :")) { dateAffichage = member.notes.split(" | Notes : ")[1] || ""; }
+
             document.getElementById('tree-desc').innerHTML = `
                 ${member.nickname ? `<strong>Surnom:</strong> ${member.nickname}<br>` : ''}
                 <strong>Branche:</strong> ${member.branch}<br>
                 ${member.phone ? `<strong>Tel:</strong> ${member.phone}<br>` : ''}
                 ${member.job ? `<strong>Métier:</strong> ${member.job}<br>` : ''}
-                ${member.notes ? `<br><em style="display:block; background:#f0f0f0; padding:8px; border-radius:4px;">"${member.notes}"</em>` : ''}
+                ${dateAffichage ? `<br><em style="display:block; background:#f0f0f0; padding:8px; border-radius:4px;">"${dateAffichage}"</em>` : ''}
             `;
             window.scrollTo(0,0);
         };
-
-        document.getElementById('search-input').addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            const filtered = allMembers.filter(m => 
-                m.firstname.toLowerCase().includes(query) || 
-                m.lastname.toLowerCase().includes(query) ||
-                (m.nickname && m.nickname.toLowerCase().includes(query))
-            );
-            renderSearchResults(filtered);
-        });
-
-        function renderSearchResults(list) {
-            const container = document.getElementById('search-results');
-            if (list.length === 0) {
-                container.innerHTML = `<p style="color:#aa3333; text-align:center; padding:10px;">Aucun résultat trouvé.</p>`;
-                return;
-            }
-            container.innerHTML = list.map(m => `
-                <div class="member-card" onclick="switchTab('tree'); selectMember(${m.id});">
-                    <div class="member-info">
-                        <h4>${m.firstname} ${m.lastname}</h4>
-                        <p>${m.branch}</p>
-                    </div>
-                    <span>🔍</span>
-                </div>
-            `).join('');
-        }
-
         document.getElementById('add-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = true;
-            submitBtn.innerText = "Sauvegarde en cours...";
+            submitBtn.innerText = "Sauvegarde...";
+            
+            const birthdate = document.getElementById('form-birthdate').value;
+            let finalNotes = document.getElementById('form-notes').value;
+            if(birthdate) {
+                finalNotes = `Né(e) le : ${birthdate} | Notes : ${finalNotes}`;
+            }
 
             const newMember = {
                 lastname: document.getElementById('form-lastname').value,
@@ -266,18 +214,14 @@
                 residence: document.getElementById('form-residence').value,
                 phone: document.getElementById('form-phone').value,
                 job: document.getElementById('form-job').value,
-                photo: '',
-                notes: document.getElementById('form-notes').value
+                notes: finalNotes
             };
-
             try {
                 const { error } = await _supabase.from('family_members').insert([newMember]);
                 if (error) throw error;
-
                 alert(`Succès ! ${newMember.firstname} a été ajouté au Cloud.`);
                 document.getElementById('add-form').reset();
                 document.getElementById('form-lastname').value = "N'GÔ";
-                
                 await fetchMembers();
                 switchTab('tree');
             } catch (err) {
@@ -287,10 +231,7 @@
                 submitBtn.innerText = "💾 ENREGISTRER SUR LE CLOUD";
             }
         });
-
-        window.addEventListener('DOMContentLoaded', () => {
-            fetchMembers();
-        });
+        window.addEventListener('DOMContentLoaded', fetchMembers);
     </script>
 </body>
 </html>
