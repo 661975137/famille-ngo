@@ -33,26 +33,22 @@
         .section { display: none; }
         .section.active { display: block; }
         
-        /* STYLE FIDÈLE À L'IMAGE 475564_2.jpg */
+        /* STYLE FIDÈLE À L'IMAGE DE RÉFÉRENCE */
         .view-title { text-align: center; font-size: 0.75rem; text-transform: uppercase; color: #666; font-weight: bold; margin: 15px 0 8px 0; letter-spacing: 0.5px; }
         .grid-siblings { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
         
-        .node-card { background: white; border: 1px solid #e0e0e0; border-radius: 14px; padding: 15px 10px; text-align: center; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.02); cursor: pointer; transition: transform 0.2s; }
-        .node-card:active { transform: scale(0.98); }
-        .node-card.active-node { background: var(--primary); color: white; border: 2px solid var(--gold); box-shadow: 0 4px 10px rgba(12,35,16,0.15); }
+        .node-card { background: white; border: 1px solid #e0e0e0; border-radius: 14px; padding: 15px 10px; text-align: center; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.02); cursor: pointer; }
+        .node-card.active-node { background: var(--primary); color: white; border: 2px solid var(--gold); }
         
         .node-star { position: absolute; top: 6px; right: 6px; color: var(--white); font-size: 0.65rem; background: var(--gold); width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        
         .node-avatar { width: 55px; height: 55px; border-radius: 50%; border: 2px solid #ccc; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; background: #eee; font-weight: bold; overflow: hidden; }
         .node-card.active-node .node-avatar { border-color: var(--gold); background: #143518; }
         .node-avatar img { width: 100%; height: 100%; object-fit: cover; }
         
-        .node-name { font-weight: bold; font-size: 0.95rem; color: #222; }
-        .node-card.active-node .node-name { color: white; }
+        .node-name { font-weight: bold; font-size: 0.95rem; }
         .node-sub { font-size: 0.75rem; color: #777; margin-top: 2px; }
         .node-card.active-node .node-sub { color: #b1c7b5; }
 
-        /* DOUBLE CARTE DU BAS (IMAGE 475564_2.jpg) */
         .profile-footer-card { background: white; border: 1px solid #e5a93c; border-radius: 16px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); margin-top: 15px; display: flex; align-items: center; gap: 15px; }
         .footer-avatar { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--accent); overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #eee; }
         .footer-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -62,22 +58,22 @@
         
         .footer-actions { display: flex; gap: 10px; margin-top: 12px; }
         .action-mini-btn { flex: 1; padding: 10px; border: none; border-radius: 20px; font-size: 0.8rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .btn-m-edit { background: #e5a93c; color: #0c2310; } /* Bouton Orange de la capture */
-        .btn-m-child { background: #0c2310; color: white; } /* Bouton + Enfant Noir-Vert de la capture */
+        .btn-m-edit { background: #e5a93c; color: #0c2310; }
+        .btn-m-child { background: #0c2310; color: white; }
 
-        /* FORMULAIRES */
+        /* FORMULAIRES & LISTES */
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.85rem; }
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.95rem; background: white; }
-        .form-group.checkbox { display: flex; align-items: center; gap: 10px; }
-        .form-group.checkbox input { width: auto; }
-
+        
         .btn { width: 100%; padding: 15px; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; }
         .btn-primary { background-color: #27ae60; color: white; }
-        .btn-danger { background-color: #e74c3c; color: white; margin-top: 5px; }
+        .btn-danger { background-color: #e74c3c; color: white; }
         
         .member-list-item { background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid var(--primary); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; }
         .mini-avatar-list { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: 10px; border: 1px solid var(--gold); }
+
+        .registrator-card { background: #fff; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
 
         nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--primary); border-top: 2px solid var(--gold); display: flex; height: 60px; z-index: 1000; }
         nav button { flex: 1; background: none; border: none; color: #aaa; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; gap: 4px; cursor: pointer; }
@@ -106,9 +102,7 @@
     </div>
 
     <div class="container">
-        <!-- SECTION 1 : L'ARBRE (VISUEL PREMIUM DE L'IMAGE) -->
         <div id="section-tree" class="section active">
-            
             <div class="view-title">Ses Frères & Sœurs Co-Fondateurs</div>
             <div class="grid-siblings" id="box-siblings"></div>
 
@@ -118,14 +112,12 @@
             <div class="view-title">Descendants Directs (Enfants)</div>
             <div id="box-children"></div>
 
-            <!-- FICHE PROFIL DU BAS FIDÈLE À L'IMAGE -->
             <div id="profile-footer-zone" style="display:none;"></div>
 
             <h3 style="margin: 25px 0 10px 0; font-size: 0.8rem; color: var(--primary); text-transform: uppercase;">Sélectionner un autre membre :</h3>
             <div id="members-global-list"></div>
         </div>
 
-        <!-- SECTION 2 : RECHERCHE -->
         <div id="section-search" class="section">
             <div class="form-group">
                 <input type="text" id="search-input" placeholder="Rechercher un nom ou prénom...">
@@ -133,7 +125,6 @@
             <div id="search-results"></div>
         </div>
 
-        <!-- SECTION 3 : AJOUTER OU METTRE A JOUR -->
         <div id="section-add" class="section">
             <h2 id="form-main-title" style="margin-bottom: 15px; font-size: 1.1rem; color: var(--primary);">Nouveau Recensement</h2>
             <form id="add-form">
@@ -142,9 +133,9 @@
                 <button type="button" class="btn" id="cancel-edit-btn" style="background:#ccc; display:none;" onclick="cancelEditingMode()">Annuler</button>
                 <button type="button" class="btn btn-danger" id="delete-btn" style="display:none;" onclick="deleteCurrentMember()">🗑️ SUPPRIMER CE MEMBRE</button>
                 
-                <div class="form-group checkbox" style="margin-bottom: 15px;">
-                    <input type="checkbox" id="form-isfounder">
-                    <label for="form-isfounder" style="color: #d4af37; font-weight: bold;">⭐ Fait partie des fondateurs de grande famille</label>
+                <div class="form-group checkbox" style="margin-bottom: 15px; display:flex; align-items:center; gap:10px;">
+                    <input type="checkbox" id="form-isfounder" style="width:auto;">
+                    <label for="form-isfounder" style="color: #d4af37; font-weight: bold; margin:0;">⭐ Fait partie des fondateurs de grande famille</label>
                 </div>
                 <div class="form-group">
                     <label>ID du Parent (Père ou Mère) - Optionnel</label>
@@ -205,12 +196,33 @@
                 </div>
             </form>
         </div>
+
+        <div id="section-config" class="section">
+            <h2 style="margin-bottom: 15px; font-size: 1.1rem; color: var(--primary);">Gestion des Enregistreurs Autorisés</h2>
+            
+            <div style="background: white; padding: 15px; border-radius: 12px; border: 1px solid #ddd; margin-bottom: 20px;">
+                <h4 style="margin-bottom: 10px; font-size: 0.9rem; color: var(--accent);">➕ Ajouter un nouvel enregistreur</h4>
+                <div class="form-group">
+                    <label>Prénom ou Nom de l'enregistreur</label>
+                    <input type="text" id="new-reg-name" placeholder="Ex: Koffi Emmanuel">
+                </div>
+                <div class="form-group">
+                    <label>Code Secret d'accès (chiffres ou lettres)</label>
+                    <input type="text" id="new-reg-code" placeholder="Ex: 8888">
+                </div>
+                <button class="btn btn-primary" onclick="addNewRegistrator()" style="padding:10px; font-size:0.9rem;">Ajouter aux droits du Cloud</button>
+            </div>
+
+            <h4 style="margin-bottom: 10px; font-size: 0.8rem; text-transform:uppercase; color:#666;">Enregistreurs actifs actuellement :</h4>
+            <div id="registrators-list"></div>
+        </div>
     </div>
 
     <nav>
         <button id="nav-tree" class="active" onclick="switchTab('tree')"><span class="icon">🌳</span><span>L'Arbre</span></button>
         <button id="nav-search" onclick="switchTab('search')"><span class="icon">🔍</span><span>Recherche</span></button>
         <button id="nav-add" style="display:none;" onclick="switchTab('add')"><span class="icon">➕</span><span>Ajouter</span></button>
+        <button id="nav-config" style="display:none;" onclick="switchTab('config')"><span class="icon">⚙️</span><span>Équipe</span></button>
     </nav>
 
     <script>
@@ -219,38 +231,89 @@
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         let allMembers = [];
+        let allRegistrators = [];
         let currentConnectedAdmin = null;
         let activeMemberId = null;
 
-        const AUTORIZED_USERS = [
-            { name: "Narcisse", code: "2026" },
-            { name: "Aubin", code: "7777" },
-            { name: "Koffi", code: "9999" }
-        ];
+        // 🔓 CHARGEMENT DES ENREGISTREURS DEPUIS LE CLOUD SUPABASE
+        async function fetchRegistrators() {
+            try {
+                const { data } = await _supabase.from('family_managers').select('*').order('name', { ascending: true });
+                allRegistrators = data || [];
+                renderRegistratorsList();
+            } catch(e) { console.error(e); }
+        }
 
-        function handleAdminAuth() {
+        async function handleAdminAuth() {
             if (currentConnectedAdmin) {
                 currentConnectedAdmin = null;
                 alert("Déconnexion réussie.");
                 document.getElementById('admin-indicator').style.display = 'none';
                 document.getElementById('nav-add').style.display = 'none';
+                document.getElementById('nav-config').style.display = 'none';
                 document.getElementById('admin-btn').innerText = "Accès Enregistrement";
                 cancelEditingMode();
                 if(activeMemberId) selectMember(activeMemberId);
             } else {
-                let codeSaisi = prompt("Entrez votre code d'accès personnel :");
-                const userFound = AUTORIZED_USERS.find(u => u.code === codeSaisi);
+                let codeSaisi = prompt("Entrez votre code d'accès personnel d'enregistreur :");
+                if (!codeSaisi) return;
+
+                // On vérifie de manière dynamique dans la liste chargée depuis Supabase
+                const userFound = allRegistrators.find(u => u.code === codeSaisi.trim());
+
                 if (userFound) {
                     currentConnectedAdmin = userFound.name;
-                    alert(`Bienvenue ${userFound.name} ! Mode d'édition et de modification activé.`);
+                    alert(`Bienvenue ${userFound.name} ! Droits d'écriture activés.`);
                     document.getElementById('admin-name').innerText = userFound.name;
                     document.getElementById('admin-indicator').style.display = 'block';
                     document.getElementById('nav-add').style.display = 'flex';
+                    document.getElementById('nav-config').style.display = 'flex'; // Affiche la molette Équipe
                     document.getElementById('admin-btn').innerText = "Déconnexion";
                     if(activeMemberId) selectMember(activeMemberId);
-                } else if(codeSaisi) {
-                    alert("Code incorrect !");
+                } else {
+                    alert("Code d'accès inconnu ou incorrect !");
                 }
+            }
+        }
+
+        function renderRegistratorsList() {
+            const container = document.getElementById('registrators-list');
+            if(allRegistrators.length === 0) {
+                container.innerHTML = "<p>Aucun enregistreur configuré.</p>";
+                return;
+            }
+            container.innerHTML = allRegistrators.map(r => `
+                <div class="registrator-card">
+                    <div>
+                        <strong>👤 ${r.name}</strong> <span style="color:#666; font-size:0.8rem;">(Code : ${r.code})</span>
+                    </div>
+                    ${r.code === '2026' ? '<span style="font-size:0.75rem; color:#aaa; font-style:italic;">SuperAdmin</span>' : `
+                        <button onclick="deleteRegistrator(${r.id})" style="background:none; border:none; color:#e74c3c; font-weight:bold; cursor:pointer;">❌ Retirer</button>
+                    `}
+                </div>
+            `).join('');
+        }
+
+        async function addNewRegistrator() {
+            const name = document.getElementById('new-reg-name').value.trim();
+            const code = document.getElementById('new-reg-code').value.trim();
+            if(!name || !code) return alert("Veuillez remplir le nom et le code !");
+
+            const { error } = await _supabase.from('family_managers').insert([{ name, code }]);
+            if(!error) {
+                alert(`L'enregistreur ${name} a été ajouté avec succès !`);
+                document.getElementById('new-reg-name').value = "";
+                document.getElementById('new-reg-code').value = "";
+                await fetchRegistrators();
+            } else {
+                alert("Erreur ou code déjà utilisé : " + error.message);
+            }
+        }
+
+        async function deleteRegistrator(id) {
+            if(confirm("Retirer les droits d'accès cloud à cet enregistreur ?")) {
+                await _supabase.from('family_managers').delete().eq('id', id);
+                await fetchRegistrators();
             }
         }
 
@@ -268,7 +331,6 @@
                 if (error) throw error;
                 allMembers = data || [];
                 document.getElementById('count-label').innerText = allMembers.length;
-                
                 renderGlobalList(allMembers);
                 
                 if(!activeMemberId && allMembers.length > 0) {
@@ -276,9 +338,7 @@
                 } else if(activeMemberId) {
                     selectMember(activeMemberId);
                 }
-            } catch (err) {
-                document.getElementById('count-label').innerText = "-";
-            }
+            } catch (err) { document.getElementById('count-label').innerText = "-"; }
         }
 
         function renderGlobalList(list) {
@@ -299,14 +359,8 @@
             const member = allMembers.find(m => m.id === id);
             if (!member) return;
 
-            // 1. CO-FONDATEURS / SŒURS
             const siblingsBox = document.getElementById('box-siblings');
-            let siblings = [];
-            if (member.fatherId) {
-                siblings = allMembers.filter(m => m.fatherId === member.fatherId && m.id !== member.id);
-            } else {
-                siblings = allMembers.filter(m => !m.fatherId && m.id !== member.id);
-            }
+            let siblings = member.fatherId ? allMembers.filter(m => m.fatherId === member.fatherId && m.id !== member.id) : allMembers.filter(m => !m.fatherId && m.id !== member.id);
             
             if(siblings.length === 0) {
                 siblingsBox.innerHTML = `<p style="grid-column: span 2; text-align:center; color:#888; font-size:0.8rem; padding:10px;">Aucun co-fondateur ou frère/sœur recensé.</p>`;
@@ -321,9 +375,7 @@
                 `).join('');
             }
 
-            // 2. MEMBRE ACTUEL (BOÎTE VERTE DE L'IMAGE)
-            const currentBox = document.getElementById('box-current-center');
-            currentBox.innerHTML = `
+            document.getElementById('box-current-center').innerHTML = `
                 <div class="node-card active-node" style="max-width: 260px; margin: 0 auto;">
                     ${member.isFounder ? '<div class="node-star">⭐</div>' : ''}
                     <div class="node-avatar">${member.photo ? `<img src="${member.photo}">` : (member.gender === 'M' ? '👨' : '👩')}</div>
@@ -332,10 +384,8 @@
                 </div>
             `;
 
-            // 3. ENFANTS
             const childrenBox = document.getElementById('box-children');
             const children = allMembers.filter(m => m.fatherId == member.id);
-            
             if(children.length === 0) {
                 childrenBox.style.display = "block";
                 childrenBox.innerHTML = `<p style="text-align:center; color:#888; font-size:0.85rem; padding:15px; background:white; border-radius:12px; border:1px solid #e0e0e0;">Aucun enfant encore recensé pour cette lignée.</p>`;
@@ -353,18 +403,14 @@
                 `).join('');
             }
 
-            // 4. DOUBLE FICHE PROFIL DU BAS
             const footerZone = document.getElementById('profile-footer-zone');
             footerZone.style.display = "block";
-            
             let dateTexte = member.notes && member.notes.startsWith("Né(e) le :") ? member.notes.split(" | Notes : ")[0] : "";
             let notePropre = member.notes && member.notes.includes(" | Notes : ") ? member.notes.split(" | Notes : ")[1] : (member.notes || "");
 
             footerZone.innerHTML = `
                 <div class="profile-footer-card">
-                    <div class="footer-avatar">
-                        ${member.photo ? `<img src="${member.photo}">` : (member.gender === 'M' ? '👨' : '👩')}
-                    </div>
+                    <div class="footer-avatar">${member.photo ? `<img src="${member.photo}">` : (member.gender === 'M' ? '👨' : '👩')}</div>
                     <div class="footer-info">
                         <h3>${member.firstname} ${member.lastname}</h3>
                         <p>
@@ -373,7 +419,6 @@
                             ${member.phone ? `<strong>Tel:</strong> ${member.phone}<br>` : ''}
                             ${notePropre ? `<span style="color:#555;">Notes : ${notePropre}</span>` : ''}
                         </p>
-                        
                         <div class="footer-actions">
                             <button class="action-mini-btn btn-m-edit" onclick="startEditingCurrentMember()">✏️ Modifier</button>
                             <button class="action-mini-btn btn-m-child" onclick="addChildDirectly(${member.id}, '${member.branch}')">👶 + Enfant</button>
@@ -384,7 +429,7 @@
         };
 
         window.addChildDirectly = function(parentId, parentBranch) {
-            if (!currentConnectedAdmin) { alert("Vous devez vous connecter en haut à droite avec votre code d'enregistreur pour ajouter un enfant."); return; }
+            if (!currentConnectedAdmin) { alert("Accès refusé. Connectez-vous avec votre code d'enregistreur."); return; }
             cancelEditingMode();
             document.getElementById('form-fatherid').value = parentId;
             document.getElementById('form-branch').value = parentBranch;
@@ -393,7 +438,7 @@
         };
 
         window.startEditingCurrentMember = function() {
-            if (!currentConnectedAdmin) { alert("Vous devez vous connecter en haut à droite avec votre code d'enregistreur pour modifier un profil."); return; }
+            if (!currentConnectedAdmin) { alert("Accès refusé. Connectez-vous avec votre code d'enregistreur."); return; }
             if(!activeMemberId) return;
             const member = allMembers.find(m => m.id === activeMemberId);
             if (!member) return;
@@ -423,7 +468,6 @@
                 document.getElementById('form-birthdate').value = "";
                 document.getElementById('form-notes').value = member.notes || "";
             }
-
             switchTab('add');
         };
 
@@ -439,13 +483,11 @@
 
         window.deleteCurrentMember = function() {
             const id = document.getElementById('form-edit-id').value;
-            if(!id) return;
-            if(confirm("Voulez-vous supprimer définitivement ce membre de la base cloud ?")) {
-                _supabase.from('family_members').delete().eq('id', id).then(() => {
-                    alert("Membre retiré du cloud.");
-                    location.reload();
-                });
-            }
+            if(!id || !confirm("Voulez-vous supprimer définitivement ce membre de la base cloud ?")) return;
+            _supabase.from('family_members').delete().eq('id', id).then(() => {
+                alert("Membre retiré.");
+                location.reload();
+            });
         };
 
         document.getElementById('add-form').addEventListener('submit', async (e) => {
@@ -460,9 +502,7 @@
             if (photoFile) {
                 const fileName = `${Date.now()}.${photoFile.name.split('.').pop()}`;
                 const { error: uploadError } = await _supabase.storage.from('avatars').upload(fileName, photoFile);
-                if (!uploadError) {
-                    photoUrl = _supabase.storage.from('avatars').getPublicUrl(fileName).data.publicUrl;
-                }
+                if (!uploadError) { photoUrl = _supabase.storage.from('avatars').getPublicUrl(fileName).data.publicUrl; }
             } else if (editId) {
                 const currentMember = allMembers.find(m => m.id == editId);
                 if (currentMember) photoUrl = currentMember.photo || "";
@@ -487,21 +527,14 @@
                 notes: finalNotes
             };
 
-            let res;
-            if (editId) {
-                res = await _supabase.from('family_members').update(memberData).eq('id', editId);
-            } else {
-                res = await _supabase.from('family_members').insert([memberData]);
-            }
+            let res = editId ? await _supabase.from('family_members').update(memberData).eq('id', editId) : await _supabase.from('family_members').insert([memberData]);
 
             if (!res.error) {
-                alert("Mise à jour réussie sur le Cloud !");
+                alert("Sauvegardé avec succès !");
                 cancelEditingMode();
                 await fetchMembers();
                 switchTab('tree');
-            } else {
-                alert("Erreur: " + res.error.message);
-            }
+            } else { alert("Erreur: " + res.error.message); }
             submitBtn.disabled = false;
         });
 
@@ -516,7 +549,11 @@
             `).join('');
         });
 
-        window.addEventListener('DOMContentLoaded', fetchMembers);
+        window.addEventListener('DOMContentLoaded', async () => {
+            await fetchRegistrators();
+            await fetchMembers();
+        });
     </script>
 </body>
 </html>
+
