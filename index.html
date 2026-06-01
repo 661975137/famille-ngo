@@ -4,15 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAMILLE N'GÔ KOFFI N'GORANKRO</title>
-    <!-- Chargement officiel de l'infrastructure Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --primary: #0c2310;   /* Vert forêt */
-            --accent: #c0583e;    /* Terre cuite */
-            --gold: #e5a93c;      /* Or */
-            --bg-light: #faf8f2;  /* Ivoire */
-            --text-dark: #1f2421; /* Sombre */
+            --primary: #0c2310;
+            --accent: #c0583e;
+            --gold: #e5a93c;
+            --bg-light: #faf8f2;
+            --text-dark: #1f2421;
             --white: #ffffff;
         }
 
@@ -28,7 +27,7 @@
         .stat-card p { font-size: 1.2rem; font-weight: bold; color: var(--primary); }
         .stat-card p.online { color: #27ae60; display: flex; align-items: center; justify-content: center; gap: 5px; }
 
-        .container { flex: 1; padding: 15px; padding-bottom: 120px; width: 100%; max-width: 600px; margin: 0 auto; }
+        .container { flex: 1; padding: 15px; padding-bottom: 140px; width: 100%; max-width: 600px; margin: 0 auto; }
         .section { display: none; }
         .section.active { display: block; }
 
@@ -38,11 +37,11 @@
 
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; background: white; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; background: white; }
         .form-group textarea { height: 80px; resize: none; }
         
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 6px; font-weight: bold; font-size: 1.1rem; cursor: pointer; text-transform: uppercase; transition: background 0.2s; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .btn-primary { background-color: #27ae60; color: white; } /* Changé en Vert pour être bien visible */
+        .btn { width: 100%; padding: 16px; border: none; border-radius: 6px; font-weight: bold; font-size: 1.1rem; cursor: pointer; text-transform: uppercase; transition: background 0.2s; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-primary { background-color: #27ae60; color: white; }
         .btn-primary:disabled { background-color: #ccc; cursor: not-allowed; }
 
         .member-card { background: white; padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--primary); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -59,7 +58,7 @@
 
     <header>
         <h1>Famille N’GÔ</h1>
-        <p>Serveur Nuage Connected (Cloud Active)</p>
+        <p>Serveur Nuage Connecté (Cloud Active)</p>
     </header>
 
     <div class="dashboard">
@@ -74,17 +73,15 @@
     </div>
 
     <div class="container">
-        <!-- SECTION 1 : L'ARBRE / ACCUEIL -->
         <div id="section-tree" class="section active">
             <div class="tree-placeholder">
                 <div class="profile-circle" id="tree-photo-placeholder">Profil</div>
                 <h3 id="tree-title">Sélectionnez un membre</h3>
-                <p id="tree-desc" style="color: #666; font-size: 0.9rem; margin-top: 5px;">Cliquez sur un membre ci-dessous pour charger sa lignée depuis le serveur.</p>
+                <p id="tree-desc" style="color: #666; font-size: 0.9rem; margin-top: 5px;">Cliquez sur un membre ci-dessous pour charger sa lignée.</p>
             </div>
             <div id="members-tree-list" style="margin-top: 20px;"></div>
         </div>
 
-        <!-- SECTION 2 : RECHERCHE -->
         <div id="section-search" class="section">
             <div class="form-group">
                 <input type="text" id="search-input" placeholder="Rechercher un nom ou prénom...">
@@ -92,12 +89,10 @@
             <div id="search-results"></div>
         </div>
 
-        <!-- SECTION 3 : AJOUTER -->
         <div id="section-add" class="section">
-            <h2 style="margin-bottom: 10px; font-size: 1.2rem;">Enregistrer un Nouveau Membre</h2>
+            <h2 style="margin-bottom: 15px; font-size: 1.2rem; color: var(--primary);">Enregistrer un Nouveau Membre</h2>
             
             <form id="add-form">
-                <!-- BOUTON REMONTÉ TOUT EN HAUT POUR ÉVITER LE BLOCAGE DE MISE EN PAGE -->
                 <button type="submit" class="btn btn-primary" id="submit-btn">💾 ENREGISTRER SUR LE CLOUD</button>
 
                 <div class="form-group">
@@ -125,7 +120,7 @@
                 </div>
                 <div class="form-group">
                     <label>Lieu de résidence actuel</label>
-                    <input type="text" id="form-residence" placeholder="Ex: Abidjan, Bouaké">
+                    <input type="text" id="form-residence" placeholder="Ex: Abidjan">
                 </div>
                 <div class="form-group">
                     <label>Numéro de téléphone</label>
@@ -133,15 +128,11 @@
                 </div>
                 <div class="form-group">
                     <label>Profession / Activité</label>
-                    <input type="text" id="form-job" placeholder="Ex: Planteur, Étudiant">
-                </div>
-                <div class="form-group">
-                    <label>Lien Photo (URL) - Optionnel</label>
-                    <input type="url" id="form-photo" placeholder="https://...">
+                    <input type="text" id="form-job" placeholder="Ex: Planteur">
                 </div>
                 <div class="form-group">
                     <label>Notes & Histoire Familiale</label>
-                    <textarea id="form-notes" placeholder="Anecdotes..."></textarea>
+                    <textarea id="form-notes" placeholder="Informations complémentaires..."></textarea>
                 </div>
             </form>
         </div>
@@ -166,7 +157,7 @@
         const SUPABASE_URL = "https://chaqgzksbcmchnwlsihq.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_00Hzy0uHaPXEZ778E6fp7g_APrYyGcS";
 
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let allMembers = [];
 
         function switchTab(tabName) {
@@ -180,7 +171,7 @@
 
         async function fetchMembers() {
             try {
-                const { data, error } = await supabaseClient
+                const { data, error } = await _supabase
                     .from('family_members')
                     .select('*')
                     .order('firstname', { ascending: true });
@@ -220,11 +211,7 @@
             if (!member) return;
 
             const photoPlaceholder = document.getElementById('tree-photo-placeholder');
-            if (member.photo && member.photo.startsWith('http')) {
-                photoPlaceholder.innerHTML = `<img src="${member.photo}" alt="Photo">`;
-            } else {
-                photoPlaceholder.innerHTML = member.gender === 'M' ? '👨' : '👩';
-            }
+            photoPlaceholder.innerHTML = member.gender === 'M' ? '👨' : '👩';
 
             document.getElementById('tree-title').innerText = `${member.firstname} ${member.lastname}`;
             document.getElementById('tree-desc').innerHTML = `
@@ -279,12 +266,12 @@
                 residence: document.getElementById('form-residence').value,
                 phone: document.getElementById('form-phone').value,
                 job: document.getElementById('form-job').value,
-                photo: '', 
+                photo: '',
                 notes: document.getElementById('form-notes').value
             };
 
             try {
-                const { error } = await supabaseClient.from('family_members').insert([newMember]);
+                const { error } = await _supabase.from('family_members').insert([newMember]);
                 if (error) throw error;
 
                 alert(`Succès ! ${newMember.firstname} a été ajouté au Cloud.`);
