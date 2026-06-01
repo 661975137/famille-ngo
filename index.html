@@ -28,7 +28,7 @@
         .stat-card p { font-size: 1.2rem; font-weight: bold; color: var(--primary); }
         .stat-card p.online { color: #27ae60; display: flex; align-items: center; justify-content: center; gap: 5px; }
 
-        .container { flex: 1; padding: 15px; padding-bottom: 80px; width: 100%; max-width: 600px; margin: 0 auto; }
+        .container { flex: 1; padding: 15px; padding-bottom: 120px; width: 100%; max-width: 600px; margin: 0 auto; }
         .section { display: none; }
         .section.active { display: block; }
 
@@ -41,8 +41,8 @@
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; background: white; }
         .form-group textarea { height: 80px; resize: none; }
         
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; text-transform: uppercase; transition: background 0.2s; }
-        .btn-primary { background-color: var(--accent); color: white; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 6px; font-weight: bold; font-size: 1.1rem; cursor: pointer; text-transform: uppercase; transition: background 0.2s; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-primary { background-color: #27ae60; color: white; } /* Changé en Vert pour être bien visible */
         .btn-primary:disabled { background-color: #ccc; cursor: not-allowed; }
 
         .member-card { background: white; padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--primary); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -59,7 +59,7 @@
 
     <header>
         <h1>Famille N’GÔ</h1>
-        <p>Serveur Nuage Connecté (Cloud Active)</p>
+        <p>Serveur Nuage Connected (Cloud Active)</p>
     </header>
 
     <div class="dashboard">
@@ -94,29 +94,34 @@
 
         <!-- SECTION 3 : AJOUTER -->
         <div id="section-add" class="section">
+            <h2 style="margin-bottom: 10px; font-size: 1.2rem;">Enregistrer un Nouveau Membre</h2>
+            
             <form id="add-form">
+                <!-- BOUTON REMONTÉ TOUT EN HAUT POUR ÉVITER LE BLOCAGE DE MISE EN PAGE -->
+                <button type="submit" class="btn btn-primary" id="submit-btn">💾 ENREGISTRER SUR LE CLOUD</button>
+
                 <div class="form-group">
-                    <label>Nom de famille</label>
+                    <label>Nom de famille *</label>
                     <input type="text" id="form-lastname" value="N'GÔ" required>
                 </div>
                 <div class="form-group">
-                    <label>Prénom</label>
+                    <label>Prénom *</label>
                     <input type="text" id="form-firstname" required placeholder="Ex: Kouamé">
                 </div>
                 <div class="form-group">
-                    <label>Surnom / Connu sous le nom de</label>
-                    <input type="text" id="form-nickname" placeholder="Ex: L'Ancien">
+                    <label>Surnom</label>
+                    <input type="text" id="form-nickname" placeholder="Ex: Kna">
                 </div>
                 <div class="form-group">
-                    <label>Genre / Sexe</label>
+                    <label>Sexe *</label>
                     <select id="form-gender">
                         <option value="M">Homme</option>
                         <option value="F">Femme</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Branche familiale / Lignée</label>
-                    <input type="text" id="form-branch" required placeholder="Ex: Lignée de l'Aîné">
+                    <label>Branche familiale / Lignée *</label>
+                    <input type="text" id="form-branch" required placeholder="Ex: Lignée de l'Aîné Kouamé">
                 </div>
                 <div class="form-group">
                     <label>Lieu de résidence actuel</label>
@@ -124,7 +129,7 @@
                 </div>
                 <div class="form-group">
                     <label>Numéro de téléphone</label>
-                    <input type="tel" id="form-phone" placeholder="Ex: +225...">
+                    <input type="tel" id="form-phone" placeholder="Ex: 07...">
                 </div>
                 <div class="form-group">
                     <label>Profession / Activité</label>
@@ -135,10 +140,9 @@
                     <input type="url" id="form-photo" placeholder="https://...">
                 </div>
                 <div class="form-group">
-                    <label>Notes / Histoire / Informations clés</label>
-                    <textarea id="form-notes" placeholder="Anecdotes, faits historiques..."></textarea>
+                    <label>Notes & Histoire Familiale</label>
+                    <textarea id="form-notes" placeholder="Anecdotes..."></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary" id="submit-btn">Envoyer et Sauvegarder sur le Cloud</button>
             </form>
         </div>
     </div>
@@ -159,14 +163,12 @@
     </nav>
 
     <script>
-        // Configuration de Vos Clés Officielles Supabase
         const SUPABASE_URL = "https://chaqgzksbcmchnwlsihq.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_00Hzy0uHaPXEZ778E6fp7g_APrYyGcS";
 
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         let allMembers = [];
 
-        // Gestion de la navigation entre onglets
         function switchTab(tabName) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
@@ -176,7 +178,6 @@
             window.scrollTo(0, 0);
         }
 
-        // Chargement des données depuis le cloud
         async function fetchMembers() {
             try {
                 const { data, error } = await supabaseClient
@@ -196,7 +197,6 @@
             }
         }
 
-        // Affichage de la liste interactive
         function renderTreeList(list) {
             const container = document.getElementById('members-tree-list');
             if (list.length === 0) {
@@ -215,7 +215,98 @@
             `).join('');
         }
 
-        // Sélection et affichage d'un membre
+        window.selectMember = function(id) {
+            const member = allMembers.find(m => m.id === id);
+            if (!member) return;
+
+            const photoPlaceholder = document.getElementById('tree-photo-placeholder');
+            if (member.photo && member.photo.startsWith('http')) {
+                photoPlaceholder.innerHTML = `<img src="${member.photo}" alt="Photo">`;
+            } else {
+                photoPlaceholder.innerHTML = member.gender === 'M' ? '👨' : '👩';
+            }
+
+            document.getElementById('tree-title').innerText = `${member.firstname} ${member.lastname}`;
+            document.getElementById('tree-desc').innerHTML = `
+                ${member.nickname ? `<strong>Surnom:</strong> ${member.nickname}<br>` : ''}
+                <strong>Branche:</strong> ${member.branch}<br>
+                ${member.phone ? `<strong>Tel:</strong> ${member.phone}<br>` : ''}
+                ${member.job ? `<strong>Métier:</strong> ${member.job}<br>` : ''}
+                ${member.notes ? `<br><em style="display:block; background:#f0f0f0; padding:8px; border-radius:4px;">"${member.notes}"</em>` : ''}
+            `;
+            window.scrollTo(0,0);
+        };
+
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = allMembers.filter(m => 
+                m.firstname.toLowerCase().includes(query) || 
+                m.lastname.toLowerCase().includes(query) ||
+                (m.nickname && m.nickname.toLowerCase().includes(query))
+            );
+            renderSearchResults(filtered);
+        });
+
+        function renderSearchResults(list) {
+            const container = document.getElementById('search-results');
+            if (list.length === 0) {
+                container.innerHTML = `<p style="color:#aa3333; text-align:center; padding:10px;">Aucun résultat trouvé.</p>`;
+                return;
+            }
+            container.innerHTML = list.map(m => `
+                <div class="member-card" onclick="switchTab('tree'); selectMember(${m.id});">
+                    <div class="member-info">
+                        <h4>${m.firstname} ${m.lastname}</h4>
+                        <p>${m.branch}</p>
+                    </div>
+                    <span>🔍</span>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('add-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Sauvegarde en cours...";
+
+            const newMember = {
+                lastname: document.getElementById('form-lastname').value,
+                firstname: document.getElementById('form-firstname').value,
+                nickname: document.getElementById('form-nickname').value,
+                gender: document.getElementById('form-gender').value,
+                branch: document.getElementById('form-branch').value,
+                residence: document.getElementById('form-residence').value,
+                phone: document.getElementById('form-phone').value,
+                job: document.getElementById('form-job').value,
+                photo: '', 
+                notes: document.getElementById('form-notes').value
+            };
+
+            try {
+                const { error } = await supabaseClient.from('family_members').insert([newMember]);
+                if (error) throw error;
+
+                alert(`Succès ! ${newMember.firstname} a été ajouté au Cloud.`);
+                document.getElementById('add-form').reset();
+                document.getElementById('form-lastname').value = "N'GÔ";
+                
+                await fetchMembers();
+                switchTab('tree');
+            } catch (err) {
+                alert("Erreur Cloud : " + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "💾 ENREGISTRER SUR LE CLOUD";
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchMembers();
+        });
+    </script>
+</body>
+</html>
         window.selectMember = function(id) {
             const member = allMembers.find(m => m.id === id);
             if (!member) return;
