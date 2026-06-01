@@ -16,40 +16,59 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
         body { background-color: var(--bg-light); color: var(--text-dark); display: flex; flex-direction: column; min-height: 100vh; }
-        header { background-color: var(--primary); color: var(--white); padding: 15px; text-align: center; border-bottom: 3px solid var(--gold); }
+        
+        header { background-color: var(--primary); color: var(--white); padding: 15px; text-align: center; border-bottom: 3px solid var(--gold); position: relative; }
         header h1 { font-size: 1.4rem; color: var(--gold); text-transform: uppercase; }
         header p { font-size: 0.85rem; opacity: 0.9; margin-top: 5px; }
+        
+        .admin-badge { position: absolute; top: 10px; left: 10px; background: #27ae60; color: white; padding: 4px 8px; font-size: 0.7rem; font-weight: bold; border-radius: 4px; display: none; }
+        .btn-admin-login { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 4px 8px; font-size: 0.7rem; border-radius: 4px; cursor: pointer; }
+
         .dashboard { display: flex; gap: 10px; padding: 15px; background: white; border-bottom: 1px solid #ddd; }
         .stat-card { flex: 1; border-left: 4px solid var(--accent); padding: 10px; background: #fdfdfd; border-radius: 4px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .stat-card h3 { font-size: 0.75rem; text-transform: uppercase; color: #666; margin-bottom: 5px; }
         .stat-card p { font-size: 1.2rem; font-weight: bold; color: var(--primary); }
-        .stat-card p.online { color: #27ae60; display: flex; align-items: center; justify-content: center; gap: 5px; }
+
         .container { flex: 1; padding: 15px; padding-bottom: 140px; width: 100%; max-width: 600px; margin: 0 auto; }
         .section { display: none; }
         .section.active { display: block; }
-        .tree-placeholder { background: white; padding: 30px; border-radius: 12px; border: 2px solid var(--gold); text-align: center; margin-top: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        
+        .tree-placeholder { background: white; padding: 30px; border-radius: 12px; border: 2px solid var(--gold); text-align: center; margin-top: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: relative; }
+        .founder-crown { display: none; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 2rem; }
         .profile-circle { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--accent); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; background: #eee; font-weight: bold; color: #555; overflow: hidden; }
+        
+        .badge-founder-card { background: var(--gold); color: var(--primary); font-size: 0.7rem; font-weight: bold; padding: 2px 6px; border-radius: 4px; margin-left: 5px; display: inline-block; vertical-align: middle; }
+
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9rem; }
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem; background: white; }
-        .form-group textarea { height: 80px; resize: none; }
+        .form-group.checkbox { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+        .form-group.checkbox input { width: auto; }
+
         .btn { width: 100%; padding: 16px; border: none; border-radius: 6px; font-weight: bold; font-size: 1.1rem; cursor: pointer; text-transform: uppercase; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .btn-primary { background-color: #27ae60; color: white; }
-        .btn-primary:disabled { background-color: #ccc; cursor: not-allowed; }
-        .member-card { background: white; padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--primary); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .member-info h4 { color: var(--primary); font-size: 1rem; }
+        
+        .member-card { background: white; padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--primary); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; }
+        .member-card.is-founder { border-left: 5px solid var(--gold); background: #fffdf7; }
+        .member-info h4 { color: var(--primary); font-size: 1rem; display: flex; align-items: center; }
         .member-info p { font-size: 0.8rem; color: #666; }
+        
         nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--primary); border-top: 2px solid var(--gold); display: flex; height: 60px; z-index: 1000; }
         nav button { flex: 1; background: none; border: none; color: #aaa; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; gap: 4px; cursor: pointer; }
         nav button.active { color: var(--white); font-weight: bold; }
+        nav button#nav-add { display: none; } /* Caché par défaut pour les utilisateurs basiques */
         nav button span.icon { font-size: 1.2rem; }
     </style>
 </head>
 <body>
+
     <header>
+        <div id="admin-indicator" class="admin-badge">ADMIN</div>
         <h1>Famille N’GÔ</h1>
         <p>Serveur Nuage Connecté (Cloud Active)</p>
+        <button id="admin-btn" class="btn-admin-login" onclick="handleAdminAuth()">Connexion Admin</button>
     </header>
+
     <div class="dashboard">
         <div class="stat-card">
             <h3>Membres Recensés</h3>
@@ -57,19 +76,24 @@
         </div>
         <div class="stat-card">
             <h3>Sauvegarde Cloud</h3>
-            <p class="online">En Ligne 🌐</p>
+            <p style="color: #27ae60;">En Ligne 🌐</p>
         </div>
     </div>
+
     <div class="container">
+        <!-- SECTION 1 : L'ARBRE -->
         <div id="section-tree" class="section active">
-            <div class="tree-placeholder">
+            <div class="tree-placeholder" id="tree-box">
+                <div class="founder-crown" id="crown-icon">👑</div>
                 <div class="profile-circle" id="tree-photo-placeholder">Profil</div>
                 <h3 id="tree-title">Sélectionnez un membre</h3>
-                <p id="tree-desc" style="color: #666; font-size: 0.9rem; margin-top: 5px;">Cliquez sur un membre ci-dessous pour charger sa lignée.</p>
+                <div id="tree-desc" style="color: #666; font-size: 0.9rem; margin-top: 5px;">Cliquez sur un membre ci-dessous pour charger sa lignée.</div>
             </div>
-            <div id="members-tree-list" style="margin-top: 20px;"></div>
+            <h3 style="margin: 20px 0 10px 0; font-size: 1.1rem; color: var(--primary);">Liste des membres recensés :</h3>
+            <div id="members-tree-list"></div>
         </div>
 
+        <!-- SECTION 2 : RECHERCHE -->
         <div id="section-search" class="section">
             <div class="form-group">
                 <input type="text" id="search-input" placeholder="Rechercher un nom ou prénom...">
@@ -77,10 +101,16 @@
             <div id="search-results"></div>
         </div>
 
+        <!-- SECTION 3 : AJOUTER (UNIQUEMENT POUR L'ADMIN) -->
         <div id="section-add" class="section">
-            <h2 style="margin-bottom: 15px; font-size: 1.2rem; color: var(--primary);">Enregistrer un Nouveau Membre</h2>
+            <h2 style="margin-bottom: 15px; font-size: 1.2rem; color: var(--primary);">Espace Administrateur : Nouveau Membre</h2>
             <form id="add-form">
                 <button type="submit" class="btn btn-primary" id="submit-btn">💾 ENREGISTRER SUR LE CLOUD</button>
+                
+                <div class="form-group checkbox">
+                    <input type="checkbox" id="form-isfounder">
+                    <label for="form-isfounder" style="color: #d4af37; font-weight: bold;">⭐ Fait partie des 5 frères fondateurs</label>
+                </div>
                 <div class="form-group">
                     <label>Nom de famille *</label>
                     <input type="text" id="form-lastname" value="N'GÔ" required>
@@ -133,16 +163,44 @@
             </form>
         </div>
     </div>
+
     <nav>
         <button id="nav-tree" class="active" onclick="switchTab('tree')"><span class="icon">🌳</span><span>L'Arbre</span></button>
         <button id="nav-search" onclick="switchTab('search')"><span class="icon">🔍</span><span>Recherche</span></button>
         <button id="nav-add" onclick="switchTab('add')"><span class="icon">➕</span><span>Ajouter</span></button>
     </nav>
+
     <script>
         const SUPABASE_URL = "https://chaqgzksbcmchnwlsihq.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_00Hzy0uHaPXEZ778E6fp7g_APrYyGcS";
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
         let allMembers = [];
+        let isAdmin = false;
+        const ADMIN_CODE = "1234"; // << CODE SECRET ADMINISTRATEUR (Modifiable ici)
+
+        function handleAdminAuth() {
+            if (isAdmin) {
+                isAdmin = false;
+                alert("Déconnexion de l'espace Administrateur.");
+                document.getElementById('admin-indicator').style.display = 'none';
+                document.getElementById('nav-add').style.display = 'none';
+                document.getElementById('admin-btn').innerText = "Connexion Admin";
+                switchTab('tree');
+            } else {
+                let code = prompt("Veuillez saisir le code secret Administrateur :");
+                if (code === ADMIN_CODE) {
+                    isAdmin = true;
+                    alert("Accès accordé ! L'onglet 'Ajouter' est maintenant disponible.");
+                    document.getElementById('admin-indicator').style.display = 'block';
+                    document.getElementById('nav-add').style.display = 'flex';
+                    document.getElementById('admin-btn').innerText = "Déconnexion";
+                } else if (code !== null) {
+                    alert("Code secret incorrect ! Accès refusé.");
+                }
+            }
+        }
+
         function switchTab(tabName) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
@@ -150,6 +208,7 @@
             document.getElementById(`nav-${tabName}`).classList.add('active');
             window.scrollTo(0, 0);
         }
+
         async function fetchMembers() {
             try {
                 const { data, error } = await _supabase.from('family_members').select('*').order('firstname', { ascending: true });
@@ -161,30 +220,52 @@
                 document.getElementById('count-label').innerText = "Erreur";
             }
         }
+
         function renderTreeList(list) {
             const container = document.getElementById('members-tree-list');
             if (list.length === 0) {
-                container.innerHTML = `<p style="text-align:center; color:#888; margin-top:20px;">Aucun membre enregistré. Utilisez le bouton <strong>➕ Ajouter</strong> en bas !</p>`;
+                container.innerHTML = `<p style="text-align:center; color:#888; margin-top:20px;">Aucun membre enregistré.</p>`;
                 return;
             }
             container.innerHTML = list.map(m => `
-                <div class="member-card" onclick="selectMember(${m.id})">
-                    <div class="member-info"><h4>${m.firstname} ${m.lastname}</h4><p>${m.branch || 'Branche'} • ${m.residence || 'Lieu'}</p></div>
+                <div class="member-card ${m.isFounder ? 'is-founder' : ''}" onclick="selectMember(${m.id})">
+                    <div class="member-info">
+                        <h4>
+                            ${m.firstname} ${m.lastname}
+                            ${m.isFounder ? '<span class="badge-founder-card">👑 FONDATEUR</span>' : ''}
+                        </h4>
+                        <p>${m.branch || 'Branche'} • ${m.residence || 'Lieu'}</p>
+                    </div>
                     <span>${m.gender === 'M' ? '👨' : '👩'}</span>
                 </div>
             `).join('');
         }
+
         window.selectMember = function(id) {
             const member = allMembers.find(m => m.id === id);
             if (!member) return;
+            
+            const treeBox = document.getElementById('tree-box');
+            const crownIcon = document.getElementById('crown-icon');
+            
+            if (member.isFounder) {
+                treeBox.style.borderColor = "var(--gold)";
+                treeBox.style.background = "#fffdf2";
+                crownIcon.style.display = "block";
+            } else {
+                treeBox.style.borderColor = "var(--gold)";
+                treeBox.style.background = "white";
+                crownIcon.style.display = "none";
+            }
+
             document.getElementById('tree-photo-placeholder').innerHTML = member.gender === 'M' ? '👨' : '👩';
             document.getElementById('tree-title').innerText = `${member.firstname} ${member.lastname}`;
             
-            // Formatage de la date pour l'affichage du profil
             let dateAffichage = member.notes && member.notes.includes("Né(e) le :") ? "" : (member.notes || "");
             if(member.notes && member.notes.startsWith("Né(e) le :")) { dateAffichage = member.notes.split(" | Notes : ")[1] || ""; }
 
             document.getElementById('tree-desc').innerHTML = `
+                ${member.isFounder ? '<strong style="color:var(--accent); display:block; margin-bottom:5px;">👑 Un des 5 Frères Fondateurs</strong>' : ''}
                 ${member.nickname ? `<strong>Surnom:</strong> ${member.nickname}<br>` : ''}
                 <strong>Branche:</strong> ${member.branch}<br>
                 ${member.phone ? `<strong>Tel:</strong> ${member.phone}<br>` : ''}
@@ -193,17 +274,18 @@
             `;
             window.scrollTo(0,0);
         };
+
         document.getElementById('add-form').addEventListener('submit', async (e) => {
             e.preventDefault();
+            if (!isAdmin) { alert("Action non autorisée. Vous devez être Admin."); return; }
+            
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = true;
             submitBtn.innerText = "Sauvegarde...";
             
             const birthdate = document.getElementById('form-birthdate').value;
             let finalNotes = document.getElementById('form-notes').value;
-            if(birthdate) {
-                finalNotes = `Né(e) le : ${birthdate} | Notes : ${finalNotes}`;
-            }
+            if(birthdate) { finalNotes = `Né(e) le : ${birthdate} | Notes : ${finalNotes}`; }
 
             const newMember = {
                 lastname: document.getElementById('form-lastname').value,
@@ -214,8 +296,10 @@
                 residence: document.getElementById('form-residence').value,
                 phone: document.getElementById('form-phone').value,
                 job: document.getElementById('form-job').value,
+                isFounder: document.getElementById('form-isfounder').checked,
                 notes: finalNotes
             };
+
             try {
                 const { error } = await _supabase.from('family_members').insert([newMember]);
                 if (error) throw error;
@@ -231,6 +315,7 @@
                 submitBtn.innerText = "💾 ENREGISTRER SUR LE CLOUD";
             }
         });
+
         window.addEventListener('DOMContentLoaded', fetchMembers);
     </script>
 </body>
