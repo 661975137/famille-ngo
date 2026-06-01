@@ -33,7 +33,6 @@
         .section { display: none; }
         .section.active { display: block; }
         
-        /* STYLE FIDÈLE À L'IMAGE DE RÉFÉRENCE */
         .view-title { text-align: center; font-size: 0.75rem; text-transform: uppercase; color: #666; font-weight: bold; margin: 15px 0 8px 0; letter-spacing: 0.5px; }
         .grid-siblings { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
         
@@ -49,7 +48,7 @@
         .node-sub { font-size: 0.75rem; color: #777; margin-top: 2px; }
         .node-card.active-node .node-sub { color: #b1c7b5; }
 
-        .profile-footer-card { background: white; border: 1px solid #e5a93c; border-radius: 16px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); margin-top: 15px; display: flex; align-items: center; gap: 15px; }
+        .profile-footer-card { background: white; border: 1px solid #e5a93c; border-radius: 16px; padding: 15px; box-shadow: 0 4px 12 rgba(0,0,0,0.04); margin-top: 15px; display: flex; align-items: center; gap: 15px; }
         .footer-avatar { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--accent); overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #eee; }
         .footer-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .footer-info { flex: 1; }
@@ -61,7 +60,6 @@
         .btn-m-edit { background: #e5a93c; color: #0c2310; }
         .btn-m-child { background: #0c2310; color: white; }
 
-        /* FORMULAIRES & LISTES */
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.85rem; }
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.95rem; background: white; }
@@ -102,6 +100,7 @@
     </div>
 
     <div class="container">
+        <!-- SECTION 1 : L'ARBRE -->
         <div id="section-tree" class="section active">
             <div class="view-title">Ses Frères & Sœurs Co-Fondateurs</div>
             <div class="grid-siblings" id="box-siblings"></div>
@@ -118,6 +117,7 @@
             <div id="members-global-list"></div>
         </div>
 
+        <!-- SECTION 2 : RECHERCHE -->
         <div id="section-search" class="section">
             <div class="form-group">
                 <input type="text" id="search-input" placeholder="Rechercher un nom ou prénom...">
@@ -125,6 +125,7 @@
             <div id="search-results"></div>
         </div>
 
+        <!-- SECTION 3 : AJOUTER UN MEMBRE -->
         <div id="section-add" class="section">
             <h2 id="form-main-title" style="margin-bottom: 15px; font-size: 1.1rem; color: var(--primary);">Nouveau Recensement</h2>
             <form id="add-form">
@@ -197,6 +198,7 @@
             </form>
         </div>
 
+        <!-- SECTION 4 : GESTION DES ENREGISTREURS -->
         <div id="section-config" class="section">
             <h2 style="margin-bottom: 15px; font-size: 1.1rem; color: var(--primary);">Gestion des Enregistreurs Autorisés</h2>
             
@@ -235,7 +237,6 @@
         let currentConnectedAdmin = null;
         let activeMemberId = null;
 
-        // 🔓 CHARGEMENT DES ENREGISTREURS DEPUIS LE CLOUD SUPABASE
         async function fetchRegistrators() {
             try {
                 const { data } = await _supabase.from('family_managers').select('*').order('name', { ascending: true });
@@ -244,6 +245,7 @@
             } catch(e) { console.error(e); }
         }
 
+        // 🔓 RECHERCHE DYNAMIQUE DU CODE SÉCURISÉ (BLINDAGE ANTI-BUG)
         async function handleAdminAuth() {
             if (currentConnectedAdmin) {
                 currentConnectedAdmin = null;
@@ -254,32 +256,50 @@
                 document.getElementById('admin-btn').innerText = "Accès Enregistrement";
                 cancelEditingMode();
                 if(activeMemberId) selectMember(activeMemberId);
-            } else {
-                let codeSaisi = prompt("Entrez votre code d'accès personnel d'enregistreur :");
-                if (!codeSaisi) return;
+                return;
+            }
 
-                // On vérifie de manière dynamique dans la liste chargée depuis Supabase
-                const userFound = allRegistrators.find(u => u.code === codeSaisi.trim());
+            let codeSaisi = prompt("Entrez votre code d'accès personnel d'enregistreur :");
+            if (!codeSaisi) return;
+            codeSaisi = codeSaisi.trim();
 
-                if (userFound) {
-                    currentConnectedAdmin = userFound.name;
-                    alert(`Bienvenue ${userFound.name} ! Droits d'écriture activés.`);
-                    document.getElementById('admin-name').innerText = userFound.name;
-                    document.getElementById('admin-indicator').style.display = 'block';
-                    document.getElementById('nav-add').style.display = 'flex';
-                    document.getElementById('nav-config').style.display = 'flex'; // Affiche la molette Équipe
-                    document.getElementById('admin-btn').innerText = "Déconnexion";
-                    if(activeMemberId) selectMember(activeMemberId);
+            // 1. LIEN DE SECOURS DIRECT EN LOCAL (Pour être sûr de toujours pouvoir entrer)
+            if (codeSaisi === "2026") {
+                activateAdminMode("Narcisse");
+                return;
+            }
+
+            // 2. INTERROGATION DIRECTE DU CLOUD EN TEMPS RÉEL (Contourne le délai de chargement)
+            try {
+                const { data, error } = await _supabase.from('family_managers').select('name').eq('code', codeSaisi);
+                if (!error && data && data.length > 0) {
+                    activateAdminMode(data[0].name);
                 } else {
                     alert("Code d'accès inconnu ou incorrect !");
                 }
+            } catch(e) {
+                // Secours subsidiaire si le cloud est inaccessible temporairement
+                const foundLocal = allRegistrators.find(u => u.code === codeSaisi);
+                if (foundLocal) activateAdminMode(foundLocal.name);
+                else alert("Code d'accès inconnu ou incorrect !");
             }
+        }
+
+        function activateAdminMode(name) {
+            currentConnectedAdmin = name;
+            alert(`Bienvenue ${name} ! Droits d'écriture et de configuration activés.`);
+            document.getElementById('admin-name').innerText = name;
+            document.getElementById('admin-indicator').style.display = 'block';
+            document.getElementById('nav-add').style.display = 'flex';
+            document.getElementById('nav-config').style.display = 'flex';
+            document.getElementById('admin-btn').innerText = "Déconnexion";
+            if(activeMemberId) selectMember(activeMemberId);
         }
 
         function renderRegistratorsList() {
             const container = document.getElementById('registrators-list');
             if(allRegistrators.length === 0) {
-                container.innerHTML = "<p>Aucun enregistreur configuré.</p>";
+                container.innerHTML = "<p style='font-size:0.9rem; color:#888; padding:10px;'>Narcisse (Enregistreur Maître par défaut)</p>";
                 return;
             }
             container.innerHTML = allRegistrators.map(r => `
@@ -287,7 +307,7 @@
                     <div>
                         <strong>👤 ${r.name}</strong> <span style="color:#666; font-size:0.8rem;">(Code : ${r.code})</span>
                     </div>
-                    ${r.code === '2026' ? '<span style="font-size:0.75rem; color:#aaa; font-style:italic;">SuperAdmin</span>' : `
+                    ${r.code === '2026' ? '<span style="font-size:0.75rem; color:#aaa; font-style:italic;">Maître</span>' : `
                         <button onclick="deleteRegistrator(${r.id})" style="background:none; border:none; color:#e74c3c; font-weight:bold; cursor:pointer;">❌ Retirer</button>
                     `}
                 </div>
@@ -305,9 +325,7 @@
                 document.getElementById('new-reg-name').value = "";
                 document.getElementById('new-reg-code').value = "";
                 await fetchRegistrators();
-            } else {
-                alert("Erreur ou code déjà utilisé : " + error.message);
-            }
+            } else { alert("Erreur : " + error.message); }
         }
 
         async function deleteRegistrator(id) {
@@ -338,11 +356,12 @@
                 } else if(activeMemberId) {
                     selectMember(activeMemberId);
                 }
-            } catch (err) { document.getElementById('count-label').innerText = "-"; }
+            } catch (err) { document.getElementById('count-label').innerText = "0"; }
         }
 
         function renderGlobalList(list) {
             const container = document.getElementById('members-global-list');
+            if(!container) return;
             container.innerHTML = list.map(m => `
                 <div class="member-list-item" onclick="selectMember(${m.id})">
                     <div class="flex-left">
@@ -556,4 +575,3 @@
     </script>
 </body>
 </html>
-
