@@ -3,45 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FAMILLE N'GÔ - GESTION</title>
+    <title>FAMILLE N'GÔ KOFFI N'GORANKRO</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --primary: #0c2310; --accent: #c0583e; --gold: #e5a93c; --bg-light: #faf8f2; }
+        :root {
+            --primary: #0c2310;
+            --accent: #c0583e;
+            --gold: #e5a93c;
+            --bg-light: #faf8f2;
+            --text-dark: #1f2421;
+            --white: #ffffff;
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: var(--bg-light); padding-bottom: 70px; }
-        header { background: var(--primary); color: white; padding: 15px; text-align: center; border-bottom: 3px solid var(--gold); }
-        .container { padding: 15px; max-width: 600px; margin: auto; }
-        .grid-siblings { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .node-card { background: white; border: 1px solid #ddd; border-radius: 10px; padding: 10px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; }
-        .active-node { background: var(--primary); color: white; border: 2px solid var(--gold); }
-        .node-avatar { width: 50px; height: 50px; border-radius: 50%; margin: 0 auto 5px; background: #eee; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .btn { width: 100%; padding: 12px; margin-top: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; text-transform: uppercase; }
-        .btn-primary { background: #27ae60; color: white; }
+        body { background-color: var(--bg-light); color: var(--text-dark); display: flex; flex-direction: column; min-height: 100vh; }
+        
+        header { background-color: var(--primary); color: var(--white); padding: 15px; text-align: center; border-bottom: 3px solid var(--gold); position: relative; }
+        header h1 { font-size: 1.4rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; }
+        header p { font-size: 0.85rem; opacity: 0.9; margin-top: 5px; }
+        
+        .admin-badge { position: absolute; top: 10px; left: 10px; background: #27ae60; color: white; padding: 4px 8px; font-size: 0.7rem; font-weight: bold; border-radius: 4px; display: none; }
+        .btn-admin-login { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.2); color: white; border: 1px solid white; padding: 4px 8px; font-size: 0.7rem; border-radius: 4px; cursor: pointer; }
+
+        .dashboard { display: flex; gap: 10px; padding: 15px; background: white; border-bottom: 1px solid #ddd; }
+        .stat-card { flex: 1; border-left: 4px solid var(--accent); padding: 10px; background: #fdfdfd; border-radius: 4px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .stat-card h3 { font-size: 0.7rem; text-transform: uppercase; color: #666; margin-bottom: 5px; }
+        .stat-card p { font-size: 1.1rem; font-weight: bold; color: var(--primary); }
+
+        .container { flex: 1; padding: 15px; padding-bottom: 140px; width: 100%; max-width: 600px; margin: 0 auto; }
+        .section { display: none; }
+        .section.active { display: block; }
+        
+        /* STYLE FIDÈLE À L'IMAGE 475564_2.jpg */
+        .view-title { text-align: center; font-size: 0.75rem; text-transform: uppercase; color: #666; font-weight: bold; margin: 15px 0 8px 0; letter-spacing: 0.5px; }
+        .grid-siblings { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        
+        .node-card { background: white; border: 1px solid #e0e0e0; border-radius: 14px; padding: 15px 10px; text-align: center; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.02); cursor: pointer; transition: transform 0.2s; }
+        .node-card:active { transform: scale(0.98); }
+        .node-card.active-node { background: var(--primary); color: white; border: 2px solid var(--gold); box-shadow: 0 4px 10px rgba(12,35,16,0.15); }
+        
+        .node-star { position: absolute; top: 6px; right: 6px; color: var(--white); font-size: 0.65rem; background: var(--gold); width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        
+        .node-avatar { width: 55px; height: 55px; border-radius: 50%; border: 2px solid #ccc; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; background: #eee; font-weight: bold; overflow: hidden; }
+        .node-card.active-node .node-avatar { border-color: var(--gold); background: #143518; }
+        .node-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .node-name { font-weight: bold; font-size: 0.95rem; color: #222; }
+        .node-card.active-node .node-name { color: white; }
+        .node-sub { font-size: 0.75rem; color: #777; margin-top: 2px; }
+        .node-card.active-node .node-sub { color: #b1c7b5; }
+
+        /* DOUBLE CARTE DU BAS (IMAGE 475564_2.jpg) */
+        .profile-footer-card { background: white; border: 1px solid #e5a93c; border-radius: 16px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); margin-top: 15px; display: flex; align-items: center; gap: 15px; }
+        .footer-avatar { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--accent); overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #eee; }
+        .footer-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .footer-info { flex: 1; }
+        .footer-info h3 { font-size: 1.1rem; color: var(--primary); font-weight: bold; }
+        .footer-info p { font-size: 0.8rem; color: #555; margin-top: 4px; line-height: 1.4; }
+        
+        .footer-actions { display: flex; gap: 10px; margin-top: 12px; }
+        .action-mini-btn { flex: 1; padding: 10px; border: none; border-radius: 20px; font-size: 0.8rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .btn-m-edit { background: #e5a93c; color: #0c2310; } /* Bouton Orange de la capture */
+        .btn-m-child { background: #0c2310; color: white; } /* Bouton + Enfant Noir-Vert de la capture */
+
+        /* FORMULAIRES */
         .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; }
-        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
-        nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--primary); display: flex; height: 60px; z-index: 1000; }
-        nav button { flex: 1; color: white; background: none; border: none; font-weight: bold; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.85rem; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.95rem; background: white; }
+        .form-group.checkbox { display: flex; align-items: center; gap: 10px; }
+        .form-group.checkbox input { width: auto; }
+
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; }
+        .btn-primary { background-color: #27ae60; color: white; }
+        .btn-danger { background-color: #e74c3c; color: white; margin-top: 5px; }
+        
+        .member-list-item { background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid var(--primary); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.05); cursor: pointer; }
+        .mini-avatar-list { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: 10px; border: 1px solid var(--gold); }
+
+        nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--primary); border-top: 2px solid var(--gold); display: flex; height: 60px; z-index: 1000; }
+        nav button { flex: 1; background: none; border: none; color: #aaa; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; gap: 4px; cursor: pointer; }
+        nav button.active { color: var(--white); font-weight: bold; }
+        nav button span.icon { font-size: 1.2rem; }
     </style>
 </head>
 <body>
-    <header><h1>Famille N’GÔ</h1></header>
+
+    <header>
+        <div id="admin-indicator" class="admin-badge">Enregistreur : <span id="admin-name"></span></div>
+        <h1>Famille N’GÔ</h1>
+        <p>Les 5 Lignées Fondatrices de Koffi N’Gorankro</p>
+        <button id="admin-btn" class="btn-admin-login" onclick="handleAdminAuth()">Accès Enregistrement</button>
+    </header>
+
+    <div class="dashboard">
+        <div class="stat-card">
+            <h3>Membres Recensés</h3>
+            <p id="count-label">-</p>
+        </div>
+        <div class="stat-card">
+            <h3>Fondateurs</h3>
+            <p style="color: var(--gold);">5 Grandes Familles ⭐</p>
+        </div>
+    </div>
+
     <div class="container">
-        <!-- Section Arbre -->
-        <div id="section-tree">
+        <!-- SECTION 1 : L'ARBRE (VISUEL PREMIUM DE L'IMAGE) -->
+        <div id="section-tree" class="section active">
+            
+            <div class="view-title">Ses Frères & Sœurs Co-Fondateurs</div>
             <div class="grid-siblings" id="box-siblings"></div>
+
+            <div class="view-title">Membre Actuel</div>
             <div id="box-current-center"></div>
-            <div id="members-global-list" style="margin-top:20px;"></div>
+
+            <div class="view-title">Descendants Directs (Enfants)</div>
+            <div id="box-children"></div>
+
+            <!-- FICHE PROFIL DU BAS FIDÈLE À L'IMAGE -->
+            <div id="profile-footer-zone" style="display:none;"></div>
+
+            <h3 style="margin: 25px 0 10px 0; font-size: 0.8rem; color: var(--primary); text-transform: uppercase;">Sélectionner un autre membre :</h3>
+            <div id="members-global-list"></div>
         </div>
 
-        <!-- Section Ajouter/Modifier -->
-        <div id="section-add" style="display:none;">
-            <h2 id="form-title">Nouveau membre</h2>
+        <!-- SECTION 2 : RECHERCHE -->
+        <div id="section-search" class="section">
+            <div class="form-group">
+                <input type="text" id="search-input" placeholder="Rechercher un nom ou prénom...">
+            </div>
+            <div id="search-results"></div>
+        </div>
+
+        <!-- SECTION 3 : AJOUTER OU METTRE A JOUR -->
+        <div id="section-add" class="section">
+            <h2 id="form-main-title" style="margin-bottom: 15px; font-size: 1.1rem; color: var(--primary);">Nouveau Recensement</h2>
             <form id="add-form">
-                <input type="hidden" id="edit-id">
+                <input type="hidden" id="form-edit-id" value="">
+                <button type="submit" class="btn btn-primary" id="submit-btn">💾 ENREGISTRER SUR LE CLOUD</button>
+                <button type="button" class="btn" id="cancel-edit-btn" style="background:#ccc; display:none;" onclick="cancelEditingMode()">Annuler</button>
+                <button type="button" class="btn btn-danger" id="delete-btn" style="display:none;" onclick="deleteCurrentMember()">🗑️ SUPPRIMER CE MEMBRE</button>
+                
+                <div class="form-group checkbox" style="margin-bottom: 15px;">
+                    <input type="checkbox" id="form-isfounder">
+                    <label for="form-isfounder" style="color: #d4af37; font-weight: bold;">⭐ Fait partie des fondateurs de grande famille</label>
+                </div>
                 <div class="form-group">
-                    <label>Grande Famille *</label>
-                    <select id="form-family" required>
+                    <label>ID du Parent (Père ou Mère) - Optionnel</label>
+                    <input type="number" id="form-fatherid" placeholder="Laissez vide si c'est un fondateur">
+                </div>
+                <div class="form-group">
+                    <label>Photo de profil</label>
+                    <input type="file" id="form-photo-file" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label>Nom de famille *</label>
+                    <input type="text" id="form-lastname" value="N'GÔ" required>
+                </div>
+                <div class="form-group">
+                    <label>Prénom *</label>
+                    <input type="text" id="form-firstname" required>
+                </div>
+                <div class="form-group">
+                    <label>Surnom</label>
+                    <input type="text" id="form-nickname">
+                </div>
+                <div class="form-group">
+                    <label>Date de Naissance</label>
+                    <input type="date" id="form-birthdate">
+                </div>
+                <div class="form-group">
+                    <label>Sexe *</label>
+                    <select id="form-gender">
+                        <option value="M">Homme</option>
+                        <option value="F">Femme</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Grande Famille Rattachée *</label>
+                    <select id="form-branch" required>
                         <option value="Lignée Kouamé">Lignée Kouamé</option>
                         <option value="Lignée Amoin">Lignée Amoin</option>
                         <option value="Lignée Kouassi">Lignée Kouassi</option>
@@ -49,68 +187,336 @@
                         <option value="Lignée Pokou">Lignée Pokou</option>
                     </select>
                 </div>
-                <div class="form-group"><label>Prénom *</label><input type="text" id="form-firstname" required></div>
-                <div class="form-group"><label>Nom *</label><input type="text" id="form-lastname" value="N'GÔ" required></div>
-                <button type="submit" class="btn btn-primary" id="submit-btn">ENREGISTRER</button>
+                <div class="form-group">
+                    <label>Lieu de résidence actuel</label>
+                    <input type="text" id="form-residence" placeholder="Ex: Abidjan">
+                </div>
+                <div class="form-group">
+                    <label>Numéro de téléphone</label>
+                    <input type="tel" id="form-phone">
+                </div>
+                <div class="form-group">
+                    <label>Profession</label>
+                    <input type="text" id="form-job">
+                </div>
+                <div class="form-group">
+                    <label>Notes & Histoire Familiale</label>
+                    <textarea id="form-notes" placeholder="Notes complémentaires..."></textarea>
+                </div>
             </form>
         </div>
     </div>
 
     <nav>
-        <button onclick="switchTab('tree')">🌳 ARBRE</button>
-        <button onclick="switchTab('add')">➕ AJOUTER/EDITER</button>
+        <button id="nav-tree" class="active" onclick="switchTab('tree')"><span class="icon">🌳</span><span>L'Arbre</span></button>
+        <button id="nav-search" onclick="switchTab('search')"><span class="icon">🔍</span><span>Recherche</span></button>
+        <button id="nav-add" style="display:none;" onclick="switchTab('add')"><span class="icon">➕</span><span>Ajouter</span></button>
     </nav>
 
     <script>
-        const _supabase = supabase.createClient("https://chaqgzksbcmchnwlsihq.supabase.co", "sb_publishable_00Hzy0uHaPXEZ778E6fp7g_APrYyGcS");
+        const SUPABASE_URL = "https://chaqgzksbcmchnwlsihq.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_00Hzy0uHaPXEZ778E6fp7g_APrYyGcS";
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
         let allMembers = [];
+        let currentConnectedAdmin = null;
+        let activeMemberId = null;
 
-        async function fetchAll() {
-            const { data } = await _supabase.from('family_members').select('*');
-            allMembers = data;
-            render();
+        const AUTORIZED_USERS = [
+            { name: "Narcisse", code: "2026" },
+            { name: "Aubin", code: "7777" },
+            { name: "Koffi", code: "9999" }
+        ];
+
+        function handleAdminAuth() {
+            if (currentConnectedAdmin) {
+                currentConnectedAdmin = null;
+                alert("Déconnexion réussie.");
+                document.getElementById('admin-indicator').style.display = 'none';
+                document.getElementById('nav-add').style.display = 'none';
+                document.getElementById('admin-btn').innerText = "Accès Enregistrement";
+                cancelEditingMode();
+                if(activeMemberId) selectMember(activeMemberId);
+            } else {
+                let codeSaisi = prompt("Entrez votre code d'accès personnel :");
+                const userFound = AUTORIZED_USERS.find(u => u.code === codeSaisi);
+                if (userFound) {
+                    currentConnectedAdmin = userFound.name;
+                    alert(`Bienvenue ${userFound.name} ! Mode d'édition et de modification activé.`);
+                    document.getElementById('admin-name').innerText = userFound.name;
+                    document.getElementById('admin-indicator').style.display = 'block';
+                    document.getElementById('nav-add').style.display = 'flex';
+                    document.getElementById('admin-btn').innerText = "Déconnexion";
+                    if(activeMemberId) selectMember(activeMemberId);
+                } else if(codeSaisi) {
+                    alert("Code incorrect !");
+                }
+            }
         }
 
-        function render() {
-            const list = document.getElementById('members-global-list');
-            list.innerHTML = allMembers.map(m => `
-                <div class="node-card" onclick="editMode(${m.id})">
-                    <h4>${m.firstname} ${m.lastname}</h4>
-                    <p><small>${m.branch}</small></p>
+        function switchTab(tabName) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(`section-${tabName}`).classList.add('active');
+            document.getElementById(`nav-${tabName}`).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        async function fetchMembers() {
+            try {
+                const { data, error } = await _supabase.from('family_members').select('*').order('firstname', { ascending: true });
+                if (error) throw error;
+                allMembers = data || [];
+                document.getElementById('count-label').innerText = allMembers.length;
+                
+                renderGlobalList(allMembers);
+                
+                if(!activeMemberId && allMembers.length > 0) {
+                    selectMember(allMembers[0].id);
+                } else if(activeMemberId) {
+                    selectMember(activeMemberId);
+                }
+            } catch (err) {
+                document.getElementById('count-label').innerText = "-";
+            }
+        }
+
+        function renderGlobalList(list) {
+            const container = document.getElementById('members-global-list');
+            container.innerHTML = list.map(m => `
+                <div class="member-list-item" onclick="selectMember(${m.id})">
+                    <div class="flex-left">
+                        ${m.photo ? `<img src="${m.photo}" class="mini-avatar-list">` : `<span style="margin-right:10px;">${m.gender === 'M' ? '👨' : '👩'}</span>`}
+                        <div><strong>${m.firstname} ${m.lastname}</strong> <span style="font-size:0.75rem; color:#666;">(${m.branch})</span></div>
+                    </div>
+                    <span>➔</span>
                 </div>
             `).join('');
         }
 
-        function editMode(id) {
-            const m = allMembers.find(x => x.id == id);
-            document.getElementById('edit-id').value = m.id;
-            document.getElementById('form-firstname').value = m.firstname;
-            document.getElementById('form-lastname').value = m.lastname;
-            document.getElementById('form-family').value = m.branch;
-            switchTab('add');
-        }
+        window.selectMember = function(id) {
+            activeMemberId = id;
+            const member = allMembers.find(m => m.id === id);
+            if (!member) return;
 
-        document.getElementById('add-form').onsubmit = async (e) => {
-            e.preventDefault();
-            const id = document.getElementById('edit-id').value;
-            const data = {
-                firstname: document.getElementById('form-firstname').value,
-                lastname: document.getElementById('form-lastname').value,
-                branch: document.getElementById('form-family').value
-            };
+            // 1. CO-FONDATEURS / SŒURS
+            const siblingsBox = document.getElementById('box-siblings');
+            let siblings = [];
+            if (member.fatherId) {
+                siblings = allMembers.filter(m => m.fatherId === member.fatherId && m.id !== member.id);
+            } else {
+                siblings = allMembers.filter(m => !m.fatherId && m.id !== member.id);
+            }
             
-            if(id) await _supabase.from('family_members').update(data).eq('id', id);
-            else await _supabase.from('family_members').insert(data);
+            if(siblings.length === 0) {
+                siblingsBox.innerHTML = `<p style="grid-column: span 2; text-align:center; color:#888; font-size:0.8rem; padding:10px;">Aucun co-fondateur ou frère/sœur recensé.</p>`;
+            } else {
+                siblingsBox.innerHTML = siblings.map(s => `
+                    <div class="node-card" onclick="selectMember(${s.id})">
+                        ${s.isFounder ? '<div class="node-star">⭐</div>' : ''}
+                        <div class="node-avatar">${s.photo ? `<img src="${s.photo}">` : (s.gender === 'M' ? '👨' : '👩')}</div>
+                        <div class="node-name">${s.firstname}</div>
+                        <div class="node-sub">${s.nickname || s.branch}</div>
+                    </div>
+                `).join('');
+            }
+
+            // 2. MEMBRE ACTUEL (BOÎTE VERTE DE L'IMAGE)
+            const currentBox = document.getElementById('box-current-center');
+            currentBox.innerHTML = `
+                <div class="node-card active-node" style="max-width: 260px; margin: 0 auto;">
+                    ${member.isFounder ? '<div class="node-star">⭐</div>' : ''}
+                    <div class="node-avatar">${member.photo ? `<img src="${member.photo}">` : (member.gender === 'M' ? '👨' : '👩')}</div>
+                    <div class="node-name" style="color:white;">${member.firstname}</div>
+                    <div class="node-sub" style="color:#b1c7b5;">${member.nickname || member.branch}</div>
+                </div>
+            `;
+
+            // 3. ENFANTS
+            const childrenBox = document.getElementById('box-children');
+            const children = allMembers.filter(m => m.fatherId == member.id);
             
-            alert("Sauvegardé !");
-            location.reload();
+            if(children.length === 0) {
+                childrenBox.style.display = "block";
+                childrenBox.innerHTML = `<p style="text-align:center; color:#888; font-size:0.85rem; padding:15px; background:white; border-radius:12px; border:1px solid #e0e0e0;">Aucun enfant encore recensé pour cette lignée.</p>`;
+            } else {
+                childrenBox.style.display = "grid";
+                childrenBox.style.gridTemplateColumns = "1fr 1fr";
+                childrenBox.style.gap = "12px";
+                childrenBox.innerHTML = children.map(c => `
+                    <div class="node-card" onclick="selectMember(${c.id})">
+                        ${c.isFounder ? '<div class="node-star">⭐</div>' : ''}
+                        <div class="node-avatar">${c.photo ? `<img src="${c.photo}">` : (c.gender === 'M' ? '👨' : '👩')}</div>
+                        <div class="node-name">${c.firstname}</div>
+                        <div class="node-sub">${c.nickname || 'Descendant'}</div>
+                    </div>
+                `).join('');
+            }
+
+            // 4. DOUBLE FICHE PROFIL DU BAS
+            const footerZone = document.getElementById('profile-footer-zone');
+            footerZone.style.display = "block";
+            
+            let dateTexte = member.notes && member.notes.startsWith("Né(e) le :") ? member.notes.split(" | Notes : ")[0] : "";
+            let notePropre = member.notes && member.notes.includes(" | Notes : ") ? member.notes.split(" | Notes : ")[1] : (member.notes || "");
+
+            footerZone.innerHTML = `
+                <div class="profile-footer-card">
+                    <div class="footer-avatar">
+                        ${member.photo ? `<img src="${member.photo}">` : (member.gender === 'M' ? '👨' : '👩')}
+                    </div>
+                    <div class="footer-info">
+                        <h3>${member.firstname} ${member.lastname}</h3>
+                        <p>
+                            Surnom: ${member.nickname || 'Aucun'} | Grande Famille: ${member.branch} | KOFFI N'GORANKRO<br>
+                            ${dateTexte ? `<strong>${dateTexte}</strong><br>` : ''}
+                            ${member.phone ? `<strong>Tel:</strong> ${member.phone}<br>` : ''}
+                            ${notePropre ? `<span style="color:#555;">Notes : ${notePropre}</span>` : ''}
+                        </p>
+                        
+                        <div class="footer-actions">
+                            <button class="action-mini-btn btn-m-edit" onclick="startEditingCurrentMember()">✏️ Modifier</button>
+                            <button class="action-mini-btn btn-m-child" onclick="addChildDirectly(${member.id}, '${member.branch}')">👶 + Enfant</button>
+                        </div>
+                    </div>
+                </div>
+            `;
         };
 
-        function switchTab(t) {
-            document.getElementById('section-tree').style.display = t === 'tree' ? 'block' : 'none';
-            document.getElementById('section-add').style.display = t === 'add' ? 'block' : 'none';
-        }
-        fetchAll();
+        window.addChildDirectly = function(parentId, parentBranch) {
+            if (!currentConnectedAdmin) { alert("Vous devez vous connecter en haut à droite avec votre code d'enregistreur pour ajouter un enfant."); return; }
+            cancelEditingMode();
+            document.getElementById('form-fatherid').value = parentId;
+            document.getElementById('form-branch').value = parentBranch;
+            document.getElementById('form-main-title').innerText = `Ajouter un enfant à la grande famille`;
+            switchTab('add');
+        };
+
+        window.startEditingCurrentMember = function() {
+            if (!currentConnectedAdmin) { alert("Vous devez vous connecter en haut à droite avec votre code d'enregistreur pour modifier un profil."); return; }
+            if(!activeMemberId) return;
+            const member = allMembers.find(m => m.id === activeMemberId);
+            if (!member) return;
+
+            document.getElementById('form-edit-id').value = member.id;
+            document.getElementById('form-main-title').innerText = `Modifier le profil de ${member.firstname}`;
+            document.getElementById('submit-btn').innerText = "💾 METTRE À JOUR LE PROFIL";
+            document.getElementById('cancel-edit-btn').style.display = "inline-block";
+            document.getElementById('delete-btn').style.display = "inline-block";
+
+            document.getElementById('form-lastname').value = member.lastname;
+            document.getElementById('form-firstname').value = member.firstname;
+            document.getElementById('form-nickname').value = member.nickname || "";
+            document.getElementById('form-gender').value = member.gender;
+            document.getElementById('form-branch').value = member.branch || "";
+            document.getElementById('form-residence').value = member.residence || "";
+            document.getElementById('form-phone').value = member.phone || "";
+            document.getElementById('form-job').value = member.job || "";
+            document.getElementById('form-fatherid').value = member.fatherId || "";
+            document.getElementById('form-isfounder').checked = member.isFounder || false;
+
+            if (member.notes && member.notes.startsWith("Né(e) le :")) {
+                const parts = member.notes.split(" | Notes : ");
+                document.getElementById('form-birthdate').value = parts[0].replace("Né(e) le : ", "").trim();
+                document.getElementById('form-notes').value = parts[1] || "";
+            } else {
+                document.getElementById('form-birthdate').value = "";
+                document.getElementById('form-notes').value = member.notes || "";
+            }
+
+            switchTab('add');
+        };
+
+        window.cancelEditingMode = function() {
+            document.getElementById('form-edit-id').value = "";
+            document.getElementById('form-main-title').innerText = "Nouveau Recensement";
+            document.getElementById('submit-btn').innerText = "💾 ENREGISTRER SUR LE CLOUD";
+            document.getElementById('cancel-edit-btn').style.display = "none";
+            document.getElementById('delete-btn').style.display = "none";
+            document.getElementById('add-form').reset();
+            document.getElementById('form-lastname').value = "N'GÔ";
+        };
+
+        window.deleteCurrentMember = function() {
+            const id = document.getElementById('form-edit-id').value;
+            if(!id) return;
+            if(confirm("Voulez-vous supprimer définitivement ce membre de la base cloud ?")) {
+                _supabase.from('family_members').delete().eq('id', id).then(() => {
+                    alert("Membre retiré du cloud.");
+                    location.reload();
+                });
+            }
+        };
+
+        document.getElementById('add-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submit-btn');
+            const editId = document.getElementById('form-edit-id').value;
+            submitBtn.disabled = true;
+
+            let photoUrl = "";
+            const photoFile = document.getElementById('form-photo-file').files[0];
+
+            if (photoFile) {
+                const fileName = `${Date.now()}.${photoFile.name.split('.').pop()}`;
+                const { error: uploadError } = await _supabase.storage.from('avatars').upload(fileName, photoFile);
+                if (!uploadError) {
+                    photoUrl = _supabase.storage.from('avatars').getPublicUrl(fileName).data.publicUrl;
+                }
+            } else if (editId) {
+                const currentMember = allMembers.find(m => m.id == editId);
+                if (currentMember) photoUrl = currentMember.photo || "";
+            }
+
+            const birthdate = document.getElementById('form-birthdate').value;
+            let finalNotes = document.getElementById('form-notes').value;
+            if(birthdate) { finalNotes = `Né(e) le : ${birthdate} | Notes : ${finalNotes}`; }
+
+            const memberData = {
+                lastname: document.getElementById('form-lastname').value,
+                firstname: document.getElementById('form-firstname').value,
+                nickname: document.getElementById('form-nickname').value,
+                gender: document.getElementById('form-gender').value,
+                branch: document.getElementById('form-branch').value,
+                residence: document.getElementById('form-residence').value,
+                phone: document.getElementById('form-phone').value,
+                job: document.getElementById('form-job').value,
+                isFounder: document.getElementById('form-isfounder').checked,
+                fatherId: document.getElementById('form-fatherid').value || null,
+                photo: photoUrl,
+                notes: finalNotes
+            };
+
+            let res;
+            if (editId) {
+                res = await _supabase.from('family_members').update(memberData).eq('id', editId);
+            } else {
+                res = await _supabase.from('family_members').insert([memberData]);
+            }
+
+            if (!res.error) {
+                alert("Mise à jour réussie sur le Cloud !");
+                cancelEditingMode();
+                await fetchMembers();
+                switchTab('tree');
+            } else {
+                alert("Erreur: " + res.error.message);
+            }
+            submitBtn.disabled = false;
+        });
+
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = allMembers.filter(m => m.firstname.toLowerCase().includes(query) || m.lastname.toLowerCase().includes(query));
+            document.getElementById('search-results').innerHTML = filtered.map(m => `
+                <div class="member-list-item" onclick="switchTab('tree'); selectMember(${m.id});">
+                    <div><strong>${m.firstname} ${m.lastname}</strong></div>
+                    <span>➔</span>
+                </div>
+            `).join('');
+        });
+
+        window.addEventListener('DOMContentLoaded', fetchMembers);
     </script>
 </body>
 </html>
